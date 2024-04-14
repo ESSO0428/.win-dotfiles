@@ -12,12 +12,13 @@ $paths = @{
 # Define files and their target handling
 $fileHandling = @{
     ".obsidian.vimrc" = "targetToSubDir";
-    ".ideavimrc" = "targetToDir";
-    "keymap.vim" = "targetToDir"
+    ".ideavimrc"      = "targetToDir";
+    "keymap.vim"      = "targetToDir"
 }
 
 # Get the current script directory to use as the source path
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptVimKeyMapSubDir = Join-Path -Path ($scriptDir) -ChildPath "VimKeyMap"
 
 # Check if each path exists
 foreach ($path in $paths.Keys) {
@@ -37,7 +38,7 @@ foreach ($path in $paths.Keys) {
                 $userChoice = Read-Host "Do you want to overwrite the sub-directory file at $fullFilePath? (y[es]/n[o])"
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
-                    Copy-Item "$scriptDir\$fileName" $fullFilePath -Force
+                    Copy-Item "$scriptVimKeyMapSubDir\$fileName" $fullFilePath -Force
                     Write-Host "File overwritten successfully at $fullFilePath."
                 }
             }
@@ -46,7 +47,7 @@ foreach ($path in $paths.Keys) {
                 $userChoice = Read-Host "Do you want to overwrite the directory file at $path? (y[es]/n[o])"
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
-                    Copy-Item "$scriptDir\$fileName" $directoryPath -Force
+                    Copy-Item "$scriptVimKeyMapSubDir\$fileName" $directoryPath -Force
                     Write-Host "File overwritten successfully at $fullFilePath."
                 }
             }
@@ -59,7 +60,7 @@ foreach ($path in $paths.Keys) {
 			$userChoice = $userChoice.ToLower()  # Normalize input
             if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                 # Copy and overwrite the directory
-                Copy-Item "$scriptDir\nvim\" $fullFilePath -Recurse -Force
+                Copy-Item "$scriptVimKeyMapSubDir\nvim\" $fullFilePath -Recurse -Force
                 Write-Host "Directory overwritten successfully."
             }
         }

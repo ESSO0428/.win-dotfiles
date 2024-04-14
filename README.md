@@ -22,21 +22,21 @@ and path to the configuration file for below editors.
 
 ### Visual Studio Code
 
-Copy paste [keymap.vim](./keymap.vim) to below **C:\Users\Andy6**
+Copy paste [./VimKeyMap/keymap.vim](./VimKeyMap/keymap.vim) to below **C:\Users\Andy6**
 
 ### Jetbrains IDE
 
-Copy paste [.ideavimrc](./.ideavimrc) to below **C:\Users\Andy6**
+Copy paste [./VimKeyMap/.ideavimrc](./VimKeyMap/.ideavimrc) to below **C:\Users\Andy6**
 
 ### Obsidian
 
-Copy paste [.obsidian.vimrc](./.obsidian.vimrc) to below **C:\Users\Andy6\Documents\Obsidian Vault**
+Copy paste [./VimKeyMap/.obsidian.vimrc](./VimKeyMap/.obsidian.vimrc) to below **C:\Users\Andy6\Documents\Obsidian Vault**
 
 ### Neovim Qt
 
 This is the neovim editor with GUI (For Windows).
 
-Copy paste files of [./nvim/](./nvim/) to **C:\Users\Andy6\AppData\Local\nvim**
+Copy paste files of [./VimKeyMap/nvim/](./VimKeyMap/nvim/) to **C:\Users\Andy6\AppData\Local\nvim**
 
 ### Other
 
