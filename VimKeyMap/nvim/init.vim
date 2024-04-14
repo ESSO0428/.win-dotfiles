@@ -76,8 +76,10 @@ nnoremap z u
 " Insert Key
 noremap h i
 noremap H I
+
 " Copy to system clipboard
 vnoremap Y "+y
+nnoremap Y y$
 
 " Find pair
 nnoremap g{ %

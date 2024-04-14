@@ -15,6 +15,9 @@ noremap z u
 noremap h i
 noremap H I
 
+" Copy to system clipboard
+nnoremap Y y$
+
 " Find pair
 nnoremap g{ %
 vnoremap g{ %
