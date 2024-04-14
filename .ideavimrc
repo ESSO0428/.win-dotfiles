@@ -1,0 +1,343 @@
+" .ideavimrc is a configuration file for IdeaVim plugin. It uses
+"   the same commands as the original .vimrc configuration.
+" You can find a list of commands here: https://jb.gg/h38q75
+" Find more examples here: https://jb.gg/share-ideavimrc
+
+
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching.
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+" map Q gq
+
+" --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
+set clipboard+=unnamed
+" Highlight copied text
+Plug 'machakann/vim-highlightedyank'
+
+" Commentary plugin
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+"" Map \r to the Reformat Code action
+"map \r <Action>(ReformatCode)
+
+"" Map <leader>d to start debug
+"map <leader>d <Action>(Debug)
+
+"" Map \b to toggle the breakpoint on the current line
+"map \b <Action>(ToggleLineBreakpoint)
+
+nnoremap s; :set relativenumber!<cr>
+let mapleader=" "
+nnoremap Q :qa<CR>
+" nnoremap S :w<CR>
+
+" Open the vimrc file anytime
+
+" Undo operations
+" colemak keyboard
+" noremap l u
+" normal keyboard
+" nmap u <Nop>
+" nnoremap z u
+" Insert Key
+noremap h i
+noremap H I
+
+" Copy to system clipboard
+vnoremap Y "+y
+nnoremap Y y$
+
+" Find pair
+nnoremap g{ %
+vnoremap g{ %
+nnoremap g} $%
+vnoremap g} $%
+
+" Search
+nnoremap <LEADER><CR> :nohlsearch<CR>
+
+" Folding
+" nnoremap <silent> <LEADER>o za
+nnoremap <silent> <LEADER>o :action ExpandCollapseToggleAction<CR>
+nnoremap <silent> <LEADER>o za
+nnoremap <silent> <LEADER>Oa zM
+nnoremap <silent> <LEADER>Od zR
+
+vnoremap <silent> <LEADER>o za
+vnoremap <silent> <LEADER>Oa zC
+vnoremap <silent> <LEADER>Od zO
+
+nnoremap <silent> [{ zk
+nnoremap <silent> ]} zj
+
+
+nnoremap o o<ESC>
+nnoremap u O<ESC>
+" for vscode ...
+" noremap O <Nop>
+nnoremap O dd
+
+nnoremap U ddk
+" noremap <c-y> yyp
+nnoremap <c-d> yyp
+" nmap < <<CR>
+" nmap > ><CR>
+
+" nnoremap <c-n> <tab>
+nnoremap <Tab> >>_
+nnoremap <S-Tab> <<_
+inoremap <S-Tab> <C-D>
+" inoremap <S-Tab> <CD>
+vnoremap <Tab> >gv
+vnoremap <S-Tab> <gv
+nnoremap gj J
+vnoremap gj J
+vnoremap gj J
+nnoremap <a-a> <c-x>
+nnoremap <a-d> <c-a>
+
+nnoremap <a-v> <c-v>
+nnoremap <c-v> p
+inoremap <c-v> <c-r>+
+cnoremap <c-v> <c-r>+
+inoremap <a-j> <esc>
+" =================== Cursor Movement ====================
+" New cursor movement (the default arrow keys are used for resizing windows)
+"     ^
+"     i
+" < j   l >
+"     k
+"     v
+
+" normal keyborad
+" for vscode
+" noremap <silent> i k
+nnoremap <silent> i gk
+nnoremap <silent> j h
+vnoremap <silent> i gk
+vnoremap <silent> j h
+" for vscode
+" noremap <silent> k j
+nnoremap <silent> k gj
+vnoremap <silent> k gj
+" noremap <silent> l l
+
+" colemak keyborad
+" noremap <silent> gu gk
+" noremap <silent> ge gj
+nnoremap <silent> \v v$h
+
+" normal keyborad
+nnoremap <silent> gi gk
+nnoremap <silent> gk gj
+vnoremap <silent> gi gk
+vnoremap <silent> gk gj
+
+" U/E keys for 5 times u/e (faster navigation)
+" colemak keyborad
+" noremap <silent> U 5k
+" noremap <silent> E 5j
+" normal keyborad
+" for vscode
+" noremap <silent> I 5k
+nnoremap <silent> I 5gk
+vnoremap <silent> I 5gk
+" for vscode
+" noremap <silent> K 5j
+nnoremap <silent> K 5gj
+vnoremap <silent> K 5gj
+
+
+" N key: go to the start of the line
+" colemak keyborad
+" noremap <silent> N 0
+" normal keyborad
+nnoremap <silent> J g0
+vnoremap <silent> J g0
+" I key: go to the end of the line
+" colemak keyborad
+" noremap <silent> I $
+" normal keyborad
+nnoremap <silent> L g$
+vnoremap <silent> L g$
+" Faster in-line navigation
+nnoremap W 5w
+nnoremap E 5e
+nnoremap B 5b
+vnoremap W 5w
+vnoremap E 5e
+vnoremap B 5b
+
+" ==================== buffer control =======================
+nnoremap <a--> :b#<CR>
+" nnoremap <c-j> :bprevious<CR>
+" nnoremap <c-l> :bnext<CR>
+nnoremap <c-w> :bd<CR>
+nnoremap <LEADER><c-w> :bd!<CR>
+
+
+
+" ==================== Window management ====================
+" Use <space> + new arrow keys for moving the cursor around windows
+" colemak keyboard
+" noremap <LEADER>w <C-w>w
+tnoremap <Esc> <C-w>N
+
+" noremap <LEADER>u <C-w>k
+" noremap <LEADER>e <C-w>j
+" noremap <LEADER>n <C-w>h
+" noremap <LEADER>i <C-w>l
+nnoremap qf <C-w>o
+" normal keyboard
+nnoremap <LEADER>i <C-w>k
+nnoremap <LEADER>k <C-w>j
+nnoremap <LEADER>j <C-w>h
+nnoremap <LEADER>l <C-w>l
+
+" Disable the default s key
+nnoremap s <nop>
+" split the screens to up (horizontal), down (horizontal), left (vertical), right (vertical)
+" colemak keyboard
+" noremap su :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
+" noremap se :set splitbelow<CR>:split<CR>
+" noremap sn :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
+" noremap si :set splitright<CR>:vsplit<CR>
+
+" normal keyboard
+nnoremap si :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
+nnoremap sk :set splitbelow<CR>:split<CR>
+nnoremap sj :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
+nnoremap sl :set splitright<CR>:vsplit<CR>
+
+" Resize splits with arrow keys
+nnoremap <up> :res +5<CR>
+nnoremap <down> :res -5<CR>
+nnoremap <left> :vertical resize-5<CR>
+nnoremap <right> :vertical resize+5<CR>
+" Place the two screens up and down
+nnoremap sh <C-w>t<C-w>K
+" Place the two screens side by side
+nnoremap sv <C-w>t<C-w>H
+" Rotate screens
+nnoremap srh <C-w>b<C-w>K
+nnoremap srv <C-w>b<C-w>H
+" Press <SPACE> + q to close the window below the current window
+nnoremap <LEADER>q :q<CR>
+
+" other
+nnoremap gi ?# \{0,1\}%%<CR>
+nnoremap gk /# \{0,1\}%%<CR>
+nnoremap <c-u> 10<c-y>
+nnoremap <c-o> 10<c-e>
+
+" IDE
+set keep-english-in-normal
+set keep-english-in-normal-and-restore-in-insert
+nnoremap <leader>e :action ActivateProjectToolWindow<CR>
+nnoremap <leader>E :action OpenRemoteDevelopment<CR>
+nnoremap <leader>rc :action ShowSettings<CR>
+nnoremap <leader>Rc :e ~\.ideavimrc<CR>
+nnoremap <leader>bc :action CloseAllEditorsButActive<CR>
+nnoremap <c-j> gT
+nnoremap <c-l> gt
+nnoremap <leader>tb :action EditSourceInNewWindow<CR>
+nnoremap z :action $Undo<CR>
+nnoremap S :action SaveDocument<CR>
+
+nnoremap gy :action CopyAbsolutePath<CR>
+
+nnoremap <CR> :action EditorSelectWord<CR>
+nnoremap <c-m> :action EditorSelectWord<CR>
+
+vnoremap gf :action GotoFile<CR>
+nnoremap gx :action GotoDeclaration<CR>
+
+nnoremap sg :action FindInPath<CR>
+nnoremap sf :action GotoFile<CR>
+nnoremap ss :action Switcher<CR>
+nnoremap so :action RecentFiles<CR>
+nnoremap <c-p> :action SearchEverywhere<CR>
+
+command! New action NewFile
+
+" Popup navigation
+inoremap <c-n> :action CodeCompletion<CR>
+inoremap <a-l> :action EditorChooseLookupItem<CR>
+inoremap <a-k> <c-n>
+inoremap <a-i> <c-p>
+
+nnoremap Z :action LocalHistory.ShowHistory<CR>
+
+nnoremap <a-Up> :action MoveLineUp<CR>
+nnoremap <a-Down> :action MoveLineDown<CR>
+
+nnoremap mm :action ToggleBookmark<CR>
+nnoremap ma :action EditBookmark<CR>
+nnoremap mi :action GotoPreviousBookmark<CR>
+nnoremap mk :action GotoNextBookmark<CR>
+nnoremap - :action ShowBookmarks<CR>
+nnoremap <c-f> :action Find<CR>
+nnoremap <c-h> :action Replace<CR>
+
+nnoremap <leader>\ :action ToggleLineBreakpoint<CR>
+nnoremap <leader>dlc :action AddConditionalBreakpoint<CR>
+nnoremap <leader>dla :action EditBreakpoint<CR>
+nnoremap <leader>ds :action Debug<CR>
+nnoremap <leader>dc :action Resume<CR>
+nnoremap <leader>dd :action Stop<CR>
+nnoremap <leader>di :action StepInto<CR>
+nnoremap <leader>du :action StepOut<CR>
+nnoremap <leader>do :action StepOver<CR>
+nnoremap <leader>d\ :action Debugger.RemoveAllBreakpoints<CR>
+
+nnoremap <c-\> :action ActivateTerminalToolWindow<CR>
+nnoremap <leader>/ :action CommentByLineComment<CR>
+vnoremap <leader>/ :action CommentByLineComment<CR>
+
+" LSP
+nnoremap <a-o> gd
+nnoremap <a-u> gD
+nnoremap <leader>= :action ReformatCode<CR>
+
+nnoremap <leader>v :action GotoSymbol<CR>
+vnoremap <leader>v :action GotoSymbol<CR>
+
+nnoremap <leader>rn :action RenameElement<CR>
+nnoremap <leader>ua :action ShowIntentionActions<CR>
+nnoremap > :action GotoNextError<CR>
+nnoremap < :action GotoPreviousError<CR>
+nnoremap gl :action ShowErrorDescription<CR>
+nnoremap gh :action QuickJavaDoc<CR>
+
+" close beep
+set noerrorbells
+set visualbell
+""""""""" vim keymap replace IDE """""""""
+sethandler <C-D> a:vim
+sethandler <C-E> a:vim
+sethandler <C-I> a:vim
+sethandler <C-J> a:vim
+sethandler <A-J> a:vim
+sethandler <C-K> a:vim
+sethandler <C-L> a:vim
+sethandler <C-M> a:vim
+sethandler <C-O> a:vim
+sethandler <C-P> a:vim
+sethandler <C-Q> a:vim
+sethandler <C-R> a:vim
+sethandler <C-U> a:vim
+sethandler <C-V> a:vim
+sethandler <C-W> a:vim
+sethandler <C-\> a:vim
+sethandler <C-F> a:vim
+sethandler <A-O> a:vim
+sethandler <C-F> a:vim
+sethandler <C-H> a:vim
