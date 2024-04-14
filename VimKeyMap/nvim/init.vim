@@ -80,6 +80,7 @@ noremap H I
 " Copy to system clipboard
 vnoremap Y "+y
 nnoremap Y y$
+nnoremap gy :let @+ = expand('%:p')<CR>
 
 " Find pair
 nnoremap g{ %
