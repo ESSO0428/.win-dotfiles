@@ -48,7 +48,7 @@ set autoindent
 hi NonText ctermfg=gray guifg=#414348
 
 
-" set guifont=Courier\ New:h30
+set guifont=Hack\ Nerd\ Font\ Mono:h10
 let mapleader=" "
 
 nnoremap <leader>dft :diffthis<cr>
