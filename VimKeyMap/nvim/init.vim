@@ -96,6 +96,16 @@ nnoremap <silent> <LEADER>o za
 nnoremap <silent> <LEADER>Oa zM
 nnoremap <silent> <LEADER>Od zR
 
+vnoremap <silent> <LEADER>o za
+vnoremap <silent> <LEADER>Oa zC
+vnoremap <silent> <LEADER>Od zO
+
+nnoremap <silent> [{ zk
+nnoremap <silent> ]} zj
+nnoremap <silent> <c-[> zk
+nnoremap <silent> <c-]> zj
+
+
 nnoremap o o<ESC>
 nnoremap u O<ESC>
 nnoremap O <Nop>

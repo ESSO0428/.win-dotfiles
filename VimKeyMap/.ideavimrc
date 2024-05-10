@@ -67,7 +67,6 @@ nnoremap <LEADER><CR> :nohlsearch<CR>
 " Folding
 " nnoremap <silent> <LEADER>o za
 nnoremap <silent> <LEADER>o :action ExpandCollapseToggleAction<CR>
-nnoremap <silent> <LEADER>o za
 nnoremap <silent> <LEADER>Oa zM
 nnoremap <silent> <LEADER>Od zR
 
@@ -77,7 +76,8 @@ vnoremap <silent> <LEADER>Od zO
 
 nnoremap <silent> [{ zk
 nnoremap <silent> ]} zj
-
+nnoremap <silent> <c-[> zk
+nnoremap <silent> <c-]> zj
 
 nnoremap o o<ESC>
 nnoremap u O<ESC>
@@ -99,7 +99,6 @@ inoremap <S-Tab> <C-D>
 vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 nnoremap gj J
-vnoremap gj J
 vnoremap gj J
 nnoremap <a-a> <c-x>
 nnoremap <a-d> <c-a>
@@ -341,3 +340,5 @@ sethandler <C-F> a:vim
 sethandler <A-O> a:vim
 sethandler <C-F> a:vim
 sethandler <C-H> a:vim
+sethandler <C-[> a:vim
+sethandler <C-]> a:vim
