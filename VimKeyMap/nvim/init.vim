@@ -117,8 +117,17 @@ nnoremap U ddk
 nnoremap <c-d> yyp
 " nmap < <<CR>
 " nmap > ><CR>
+nnoremap x "_x
+nnoremap <leader>d "_d
+nnoremap <leader>D "_D
+nnoremap <leader>c "_c
+nnoremap <leader>C "_C
+vnoremap <leader>d "_d
+vnoremap <leader>D "_D
+vnoremap <leader>c "_c
+vnoremap <leader>C "_C
 
-nnoremap <c-n> <tab>
+" nnoremap <c-n> <tab>
 nnoremap <Tab> >>_
 nnoremap <S-Tab> <<_
 inoremap <S-Tab> <C-D>

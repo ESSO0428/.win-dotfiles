@@ -238,6 +238,15 @@ exmap HoverTableEditor obcommand markdown-table-editor:markdown-table-editor-ope
 nmap <Space>tm :HoverTableEditor
 
 nmap <C-d> yyp
+nnoremap x "_x
+nnoremap <Space>d "_d
+nnoremap <Space>D "_D
+nnoremap <Space>c "_c
+nnoremap <Space>C "_C
+vnoremap <Space>d "_d
+vnoremap <Space>D "_D
+vnoremap <Space>c "_c
+vnoremap <Space>C "_C
 
 exmap HoverCurrentRelativePlot obcommand cmdr:macro-0
 nmap <Space>hr :HoverCurrentRelativePlot
