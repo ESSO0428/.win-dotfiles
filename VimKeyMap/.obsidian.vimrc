@@ -237,7 +237,9 @@ exmap MarkdownPreview obcommand markdown:toggle-preview
 exmap HoverTableEditor obcommand markdown-table-editor:markdown-table-editor-open-in-popover
 nmap <Space>tm :HoverTableEditor
 
-nmap <C-d> yyp
+nnoremap <a-i> <c-u>
+nnoremap <a-k> <c-d>
+nnoremap <C-d> yyp
 nnoremap x "_x
 nnoremap <Space>d "_d
 nnoremap <Space>D "_D
