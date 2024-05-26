@@ -206,8 +206,8 @@ nmap &b& :blankBelow
 " nmap u &a&k
 nmap o &b&
 nmap u &a&
-nmap U ddi
-nmap O dd
+nmap U "_ddk
+nmap O "_dd
 
 exmap GoToPreviousHeading obcommand obsidian-editor-shortcuts:goToPrevHeading
 exmap GoToNextHeading obcommand obsidian-editor-shortcuts:goToNextHeading
@@ -242,6 +242,7 @@ nnoremap <a-k> <c-d>
 nnoremap <C-d> yyp
 nnoremap x "_x
 nnoremap <Space>d "_d
+nnoremap <Space>dD "_dd
 nnoremap <Space>D "_D
 nnoremap <Space>c "_c
 nnoremap <Space>C "_C

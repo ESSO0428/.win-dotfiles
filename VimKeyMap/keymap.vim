@@ -44,9 +44,9 @@ nnoremap o o<ESC>
 nnoremap u O<ESC>
 " for vscode ...
 " noremap O <Nop>
-nnoremap O dd
+nnoremap O "_dd
 
-nnoremap U ddk
+nnoremap U "_ddk
 nnoremap <a-i> <c-u>
 nnoremap <a-k> <c-d>
 " noremap <c-y> yyp
@@ -59,6 +59,7 @@ nnoremap <leader>D "_D
 nnoremap <leader>c "_c
 nnoremap <leader>C "_C
 vnoremap <leader>d "_d
+nnoremap <leader>dD "_dd
 vnoremap <leader>D "_D
 vnoremap <leader>c "_c
 vnoremap <leader>C "_C
