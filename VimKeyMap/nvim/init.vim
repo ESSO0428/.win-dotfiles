@@ -376,3 +376,4 @@ noremap <leader>rc :e $HOME\AppData\Local\nvim\init.vim<CR>
 
 source $HOME\AppData\Local\nvim\.vim\vim\explorer.vim
 source $HOME\AppData\Local\nvim\.vim\vim\buffer.vim
+lua require('conf')
