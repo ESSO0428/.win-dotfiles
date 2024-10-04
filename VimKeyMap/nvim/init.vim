@@ -31,8 +31,6 @@ inoremap <a-j> <esc>
 inoremap <a-i> <c-p>
 inoremap <a-k> <c-n>
 
-set inccommand=split
-
 set nowarn
 set number
 set cursorline
@@ -47,6 +45,8 @@ set softtabstop=4
 set autoindent
 
 
+set inccommand=split
+set laststatus=3
 set splitright
 set splitbelow
 
