@@ -31,6 +31,8 @@ inoremap <a-j> <esc>
 inoremap <a-i> <c-p>
 inoremap <a-k> <c-n>
 
+set inccommand=split
+
 set nowarn
 set number
 set cursorline
@@ -45,7 +47,15 @@ set softtabstop=4
 set autoindent
 
 
+set splitright
+set splitbelow
+
 hi NonText ctermfg=gray guifg=#414348
+hi Visual cterm=reverse gui=reverse
+augroup YankHighlight
+  autocmd!
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=200})
+augroup END
 
 
 set guifont=Hack\ Nerd\ Font\ Mono:h10
@@ -245,9 +255,9 @@ nnoremap <LEADER>d<c-w> :bd!<CR>
 " Use <space> + new arrow keys for moving the cursor around windows
 " colemak keyboard
 " noremap <LEADER>w <C-w>w
-if version >= 801
-	tnoremap <c-n> <C-w>N
-endif	
+" if version >= 801
+" 	tnoremap <c-n> <C-w>N
+" endif	
 
 " noremap <LEADER>u <C-w>k
 " noremap <LEADER>e <C-w>j
@@ -296,18 +306,22 @@ nnoremap <silent> <leader>q :q<CR>
 
 " ==================== Tab management ====================
 " Create a new tab with tu
-noremap <a-'> :tab split<CR>
-noremap <a-,> :tabprevious<CR>
-noremap <a-.> :tabnext<CR>
-noremap <C-Left> :-tabmove<CR>
-noremap <C-Right> :+tabmove<CR>
-noremap <a-\> :tabclose<CR>
+nnoremap <a-'> :tab split<CR>
+nnoremap <a-,> :tabprevious<CR>
+nnoremap <a-.> :tabnext<CR>
+nnoremap <C-Left> :-tabmove<CR>
+nnoremap <C-Right> :+tabmove<CR>
+nnoremap <a-\> :tabclose<CR>
 
 
 " ==================== Other useful stuff ====================
 " Open a new instance of st with the cwd
+" nnoremap \t :tabe<CR>:-tabmove<CR>:term sh -c 'st'<CR><C-\><C-N>:q<CR>
 " Opening a terminal window
-noremap <a--> :b#<CR>
+nnoremap <silent> <c-\> :split \| term<CR>
+tnoremap <c-n> <c-\><c-n>
+" nnoremap <LEADER>b- :b#<CR>
+nnoremap <a--> :b#<CR>
 
 
 " set wrap
@@ -365,6 +379,16 @@ nnoremap sgl <c-w>vgf
 nnoremap sgF <c-w>gF
 nnoremap sgf <c-w>gf
 
+function DeleteHiddenBuffers() " Vim with the 'hidden' option
+  let tpbl=[]
+  call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+  for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+    silent execute 'bwipeout' buf
+  endfor
+endfunction
+command! DeleteHiddenBuffers call DeleteHiddenBuffers()
+nnoremap <leader>bc :DeleteHiddenBuffers<cr>
+
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\e[5 q\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>\e[2 q\<Esc>\\"
@@ -374,7 +398,7 @@ else
 endif
 
 
-noremap <leader>rc :e $HOME\AppData\Local\nvim\init.vim<CR>
+nnoremap <leader>rc :e $HOME\AppData\Local\nvim\init.vim<CR>
 
 source $HOME\AppData\Local\nvim\.vim\vim\explorer.vim
 source $HOME\AppData\Local\nvim\.vim\vim\buffer.vim
