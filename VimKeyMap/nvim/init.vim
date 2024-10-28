@@ -49,6 +49,7 @@ set inccommand=split
 set laststatus=3
 set splitright
 set splitbelow
+set noequalalways
 
 hi NonText ctermfg=gray guifg=#414348
 hi Visual cterm=reverse gui=reverse
