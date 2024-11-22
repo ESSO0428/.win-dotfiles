@@ -118,7 +118,13 @@ nnoremap <silent> <c-END> zj
 nnoremap <silent> <a-[> zk
 nnoremap <silent> <a-]> zj
 
+" move line
+nnoremap <silent><a-Up> :m -2<CR>
+nnoremap <silent><a-Down> :m +1<CR>
+vnoremap <silent><a-Up> :m '<-2<CR>gv=gv
+vnoremap <silent><a-Down> :m '>+1<CR>gv=gv
 
+" remap undo, insert new line
 nnoremap o o<ESC>
 nnoremap u O<ESC>
 nnoremap O <Nop>
@@ -366,10 +372,36 @@ function! SetWrapKeymaps()
   endif
 endfunction
 
+function! SetStatusline()
+    set statusline=%#StatusLine#
+    set statusline+=%{mode()}
+	set statusline+=\ > 
+    set statusline+=%=%#StatusLine#
+    set statusline+=\ %{getcwd()}
+    set statusline+=\ <\ %{&encoding}
+    set statusline+=\ <\ %{&fileformat}
+    set statusline+=\ <\ %{&filetype}
+    set statusline+=\ <\ PID:%{getpid()}
+    set statusline+=\ <\ %l:%c
+    set statusline+=\ <\ %p%%/%L
+endfunction
+
+call SetStatusline()
+
+
 " 每次切換緩衝區或打開新文件時執行 SetWrapKeymaps 函數
 autocmd BufEnter * call SetWrapKeymaps()
 autocmd OptionSet wrap call SetWrapKeymaps()
 
+" === window move ===
+nnoremap <a-e><l> :wincmd r<CR>
+nnoremap <a-e><Right> :wincmd r<CR>
+nnoremap <a-e><j> :wincmd H<CR>
+nnoremap <a-e><Left> :wincmd H<CR>
+nnoremap <a-e><i> :wincmd K<CR>
+nnoremap <a-e><Up> :wincmd K<CR>
+nnoremap <a-e><k> :wincmd j<CR>
+nnoremap <a-e><Down> :wincmd j<CR>
 
 " === gf control ===
 autocmd BufEnter * if expand('%') != '' | set path=.,%:h | endif
@@ -379,6 +411,12 @@ nnoremap sgk <c-w>f
 nnoremap sgl <c-w>vgf
 nnoremap sgF <c-w>gF
 nnoremap sgf <c-w>gf
+
+" === change path ===
+let g:WorkDirectoryPath = getcwd()
+nnoremap <silent> <a-BS> :cd ../<CR>
+nnoremap <silent> <leader><a-BS> :cd %:p:h<cr>
+nnoremap <silent> <leader>r<a-BS> :execute ':cd ' . g:WorkDirectoryPath<cr>
 
 function DeleteHiddenBuffers() " Vim with the 'hidden' option
   let tpbl=[]
