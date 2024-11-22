@@ -290,10 +290,10 @@ nnoremap s <nop>
 " noremap si :set splitright<CR>:vsplit<CR>
 
 " normal keyboard
-nnoremap si :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
-nnoremap sk :set splitbelow<CR>:split<CR>
-nnoremap sj :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
-nnoremap sl :set splitright<CR>:vsplit<CR>
+nnoremap <silent> si :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
+nnoremap <silent> sk :set splitbelow<CR>:split<CR>
+nnoremap <silent> sj :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
+nnoremap <silent> sl :set splitright<CR>:vsplit<CR>
 
 " Resize splits with arrow keys
 nnoremap <up> :res -5<CR>
@@ -372,9 +372,22 @@ function! SetWrapKeymaps()
   endif
 endfunction
 
+function! ModeDetail()
+  let l:current_mode = mode()
+  return l:current_mode ==# 'n' ? 'NORMAL' :
+        \ l:current_mode ==# 'v' ? 'VISUAL' :
+        \ l:current_mode ==# 'V' ? 'V-LINE' :
+        \ l:current_mode ==# "\<C-V>" ? 'V-BLOCK' :
+        \ l:current_mode ==# 'i' ? 'INSERT' :
+        \ l:current_mode ==# 'R' ? 'REPLACE' :
+        \ l:current_mode ==# 'c' ? 'COMMAND' :
+        \ l:current_mode ==# 't' ? 'TERMINAL' :
+        \ 'UNKNOWN'
+endfunction
+
 function! SetStatusline()
     set statusline=%#StatusLine#
-    set statusline+=%{mode()}
+    set statusline+=%{ModeDetail()}
 	set statusline+=\ > 
     set statusline+=%=%#StatusLine#
     set statusline+=\ %{getcwd()}
@@ -406,13 +419,13 @@ autocmd BufEnter * call SetWrapKeymaps()
 autocmd OptionSet wrap call SetWrapKeymaps()
 
 " === window move ===
-nnoremap <a-e><l> :wincmd r<CR>
+nnoremap <a-e>l :wincmd r<CR>
 nnoremap <a-e><Right> :wincmd r<CR>
-nnoremap <a-e><j> :wincmd H<CR>
+nnoremap <a-e>j :wincmd H<CR>
 nnoremap <a-e><Left> :wincmd H<CR>
-nnoremap <a-e><i> :wincmd K<CR>
+nnoremap <a-e>i :wincmd K<CR>
 nnoremap <a-e><Up> :wincmd K<CR>
-nnoremap <a-e><k> :wincmd j<CR>
+nnoremap <a-e>k :wincmd j<CR>
 nnoremap <a-e><Down> :wincmd j<CR>
 
 " === gf control ===
