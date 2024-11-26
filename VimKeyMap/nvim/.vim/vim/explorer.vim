@@ -45,7 +45,7 @@ function! NetrwMapping()
    nmap <buffer> r R
 
    nmap <buffer> s <Nop>
-   nmap <buffer> q :q<CR>
+   nmap <nowait><buffer> q :q<CR>
    nmap <buffer> <a-l> v
    nmap <buffer> <a-k> o
 
