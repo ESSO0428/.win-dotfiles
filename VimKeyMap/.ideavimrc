@@ -327,6 +327,8 @@ nnoremap > :action GotoNextError<CR>
 nnoremap < :action GotoPreviousError<CR>
 nnoremap gl :action ShowErrorDescription<CR>
 nnoremap gh :action QuickJavaDoc<CR>
+nnoremap <leader>uki :action copilot.chat.show<CR>
+" Other commands can use `:actionlist` to find
 
 " close beep
 set noerrorbells
