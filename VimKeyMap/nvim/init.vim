@@ -400,22 +400,6 @@ endfunction
 
 call SetStatusline()
 
-function! SetWinbar()
-  let l:filename = expand('%:t')
-  if l:filename == ''
-    setlocal winbar=
-  else
-    let l:modified = &modified ? '*' : ''
-    let l:winbar_content = l:filename . l:modified
-    execute 'setlocal winbar=' . l:winbar_content
-  endif
-endfunction
-
-augroup DynamicWinbar
-  autocmd!
-  autocmd BufEnter,WinEnter,CursorHold,CursorHoldI,TextChanged,TextChangedI * call SetWinbar()
-augroup END
-
 " 每次切換緩衝區或打開新文件時執行 SetWrapKeymaps 函數
 autocmd BufEnter * call SetWrapKeymaps()
 autocmd OptionSet wrap call SetWrapKeymaps()
