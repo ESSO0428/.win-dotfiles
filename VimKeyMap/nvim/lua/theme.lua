@@ -16,3 +16,19 @@ vim.cmd "hi DiffDeleteText gui=none guifg=none guibg=#5A1D1D"
 -- "DiffChange:DiffAdd",
 -- "DiffText:DiffAddText",
 vim.cmd "hi DiffAddText gui=none guifg=none guibg=#2C6468"
+
+
+function SetWinbar()
+  local filename = vim.fn.expand('%:t')
+  if filename == '' then
+    return ''
+  end
+  local modified = vim.bo.modified and '*' or ''
+  return filename .. modified
+end
+
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter", "FileType" }, {
+  callback = function()
+    vim.opt_local.winbar = "%{%v:lua.SetWinbar()%}"
+  end,
+})
