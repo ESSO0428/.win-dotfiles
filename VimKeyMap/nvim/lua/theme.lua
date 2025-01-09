@@ -27,8 +27,39 @@ function SetWinbar()
   return filename .. modified
 end
 
-vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter", "FileType" }, {
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
   callback = function()
+    local filetype = vim.bo.filetype
+    local winbar_filetype_exclude = {
+      "help",
+      "startify",
+      "dashboard",
+      "lazy",
+      "neo-tree",
+      "neogitstatus",
+      "NvimTree",
+      "Trouble",
+      "alpha",
+      "lir",
+      "Outline",
+      "spectre_panel",
+      "toggleterm",
+      "DressingSelect",
+      "Jaq",
+      "harpoon",
+      "dap-repl",
+      "dap-terminal",
+      "dapui_console",
+      "dapui_hover",
+      "lab",
+      "notify",
+      "noice",
+      "neotest-summary",
+      "",
+    }
+    if vim.tbl_contains(winbar_filetype_exclude, filetype) then
+      return
+    end
     vim.opt_local.winbar = "%{%v:lua.SetWinbar()%}"
   end,
 })
