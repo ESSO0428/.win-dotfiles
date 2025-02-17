@@ -55,6 +55,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
       "notify",
       "noice",
       "neotest-summary",
+      "minifiles",
       "",
     }
     if vim.tbl_contains(winbar_filetype_exclude, filetype) then

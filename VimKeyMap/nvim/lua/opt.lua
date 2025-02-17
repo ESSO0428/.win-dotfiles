@@ -29,3 +29,5 @@ local transparent_highlights = {
 for _, hl in ipairs(transparent_highlights) do
   vim.cmd.highlight(hl .. ' guibg=NONE ctermbg=NONE')
 end
+
+vim.cmd('source $HOME/AppData/Local/nvim/keymap.vim')
