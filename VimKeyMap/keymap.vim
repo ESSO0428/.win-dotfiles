@@ -25,16 +25,16 @@ nnoremap g} $%
 vnoremap g} $%
 
 " Search
-nnoremap <LEADER><CR> :nohlsearch<CR>
+nnoremap <leader><CR> :nohlsearch<CR>
 
 " Folding
-nnoremap <silent> <LEADER>o za
-nnoremap <silent> <LEADER>Oa zM
-nnoremap <silent> <LEADER>Od zR
+nnoremap <silent> <leader>o za
+nnoremap <silent> <leader>Oa zM
+nnoremap <silent> <leader>Od zR
 
-vnoremap <silent> <LEADER>o za
-vnoremap <silent> <LEADER>Oa zC
-vnoremap <silent> <LEADER>Od zO
+vnoremap <silent> <leader>o za
+vnoremap <silent> <leader>Oa zC
+vnoremap <silent> <leader>Od zO
 
 nnoremap <silent> [{ zk
 nnoremap <silent> ]} zj
@@ -137,13 +137,6 @@ vnoremap <silent> J g0
 " normal keyborad
 nnoremap <silent> L g$
 vnoremap <silent> L g$
-" Faster in-line navigation
-nnoremap W 5w
-nnoremap E 5e
-nnoremap B 5b
-vnoremap W 5w
-vnoremap E 5e
-vnoremap B 5b
 
 nnoremap <C-u> 10<C-y>
 nnoremap <C-o> 10<C-e>
@@ -152,26 +145,23 @@ nnoremap <C-o> 10<C-e>
 nnoremap <c-j> :bprevious<CR>
 nnoremap <c-l> :bnext<CR>
 nnoremap <c-w> :bd<CR>
-nnoremap <LEADER><c-w> :bd!<CR>
-
-
-
+nnoremap <leader><c-w> :bd!<CR>
 " ==================== Window management ====================
 " Use <space> + new arrow keys for moving the cursor around windows
 " colemak keyboard
-" noremap <LEADER>w <C-w>w
+" noremap <leader>w <C-w>w
 tnoremap <Esc> <C-w>N
 
-" noremap <LEADER>u <C-w>k
-" noremap <LEADER>e <C-w>j
-" noremap <LEADER>n <C-w>h
-" noremap <LEADER>i <C-w>l
+" noremap <leader>u <C-w>k
+" noremap <leader>e <C-w>j
+" noremap <leader>n <C-w>h
+" noremap <leader>i <C-w>l
 nnoremap qf <C-w>o
 " normal keyboard
-nnoremap <LEADER>i <C-w>k
-nnoremap <LEADER>k <C-w>j
-nnoremap <LEADER>j <C-w>h
-nnoremap <LEADER>l <C-w>l
+nnoremap <leader>i <C-w>k
+nnoremap <leader>k <C-w>j
+nnoremap <leader>j <C-w>h
+nnoremap <leader>l <C-w>l
 
 " Disable the default s key
 nnoremap s <nop>
@@ -201,6 +191,4 @@ nnoremap sv <C-w>t<C-w>H
 nnoremap srh <C-w>b<C-w>K
 nnoremap srv <C-w>b<C-w>H
 " Press <SPACE> + q to close the window below the current window
-nnoremap <LEADER>q :q<CR>
-
-
+nnoremap <leader>q :q<CR>
