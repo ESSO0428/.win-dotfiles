@@ -72,6 +72,7 @@ autocmd BufRead,BufNewFile *.md inoremap <buffer> ,, <++>
                         \| inoremap <buffer> ,c ```<++>```<CR><CR><++><Esc>2ki<CR><Esc>f>a<CR><Esc>2k$a
                         \| inoremap <buffer> ,f <Esc>/<++><CR>:nohlsearch<CR>"_c4l
 
+let g:SetWrapKeymapExcludeArray = ['minifiles']
 
 nnoremap Q :qa<CR>
 nnoremap S :w<CR>
@@ -161,6 +162,27 @@ nnoremap gj J
 vnoremap gj J
 nnoremap <a-a> <c-x>
 nnoremap <a-d> <c-a>
+" ==================== spell ====================
+nnoremap s,G zG
+nnoremap s,g zg
+nnoremap s,w zw
+nnoremap s,W zW
+nnoremap s,uw zuw
+nnoremap s,ug zug
+nnoremap s,uW zuW
+nnoremap s,uG zuG
+nnoremap s,= z=
+vnoremap s,G zG
+vnoremap s,g zg
+vnoremap s,w zw
+vnoremap s,W zW
+vnoremap s,uw zuw
+vnoremap s,ug zug
+vnoremap s,uW zuW
+vnoremap s,uG zuG
+vnoremap s,= z=
+" ===
+nnoremap <silent> <a-m> :set list!<cr>
 
 nnoremap <a-v> <c-v>
 
@@ -249,6 +271,16 @@ vnoremap W 5w
 vnoremap E 5e
 vnoremap B 5b
 
+" Faster insert to normal mode
+" inoremap <a-j> <esc>
+inoremap <a-J> <esc>
+nnoremap <a-J> <nop>
+" ==================== Insert Mode Cursor Movement ====================
+inoremap <a-n> <Up>
+inoremap <a-m> <Down>
+inoremap <a-,> <Left>
+inoremap <a-.> <Right>
+
 " ==================== buffer control =======================
 nnoremap <c-j> :bprevious<CR>
 nnoremap <c-l> :bnext<CR>
@@ -335,6 +367,9 @@ set nowrap
 
 
 function! SetWrapKeymaps()
+  if index(g:SetWrapKeymapExcludeArray, &ft) >= 0
+    return
+  endif
   if exists('b:venn_enabled') && b:venn_enabled
     return
   endif
