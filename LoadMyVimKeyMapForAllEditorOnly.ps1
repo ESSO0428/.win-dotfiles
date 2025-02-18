@@ -24,7 +24,7 @@ $scriptVimKeyMapSubDir = Join-Path -Path ($scriptDir) -ChildPath "VimKeyMap"
 foreach ($path in $paths.Keys) {
     $fileName = $paths[$path]
     $fullFilePath = [System.IO.Path]::Combine($path, $fileName)
-	$directoryPath = $fullFilePath | Split-Path -Parent
+    $directoryPath = $fullFilePath | Split-Path -Parent
     
     if (Test-Path $path) {
         
@@ -34,33 +34,36 @@ foreach ($path in $paths.Keys) {
         # Prompt user for overwrite action using a switch on handling type
         switch ($handlingType) {
             "targetToSubDir" {
-				Write-Host "File exists: $fullFilePath"
-                $userChoice = Read-Host "Do you want to overwrite the sub-directory file at $fullFilePath? (y[es]/n[o])"
+                Write-Host "File exists: $fullFilePath"
+                $userChoice = Read-Host ("Do you want to overwrite the sub-directory file at " + $fullFilePath + "? (y[es]/n[o])")
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                     Copy-Item "$scriptVimKeyMapSubDir\$fileName" $fullFilePath -Force
-                    Write-Host "File overwritten successfully at $fullFilePath."
+                    Write-Host "File overwritten successfully at " + $fullFilePath + "."
                 }
             }
             "targetToDir" {
-				Write-Host "File exists: $path"
-                $userChoice = Read-Host "Do you want to overwrite the directory file at $path? (y[es]/n[o])"
+                Write-Host "File exists: $path"
+                $userChoice = Read-Host ("Do you want to overwrite the directory file at " + $path + "? (y[es]/n[o])")
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                     Copy-Item "$scriptVimKeyMapSubDir\$fileName" $directoryPath -Force
-                    Write-Host "File overwritten successfully at $fullFilePath."
+                    Write-Host "File overwritten successfully at " + $fullFilePath + "."
                 }
             }
         }
         if ($paths[$path] -eq "nvim/") {
-			Write-Host "File exists: $fullFilePath"
-			$fullFilePath = [System.IO.Path]::Combine([Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData))
+            Write-Host "File exists: $directoryPath"
 
-			$userChoice = Read-Host "Do you want to overwrite the nvim/ directory at $path? (y[es]/n[o])"
-			$userChoice = $userChoice.ToLower()  # Normalize input
+            $userChoice = Read-Host ("Do you want to completely remove and overwrite the nvim/ directory at " + $path + "? (y[es]/n[o])")
+            $userChoice = $userChoice.ToLower()  # Normalize input
             if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                 # Copy and overwrite the directory
-                Copy-Item "$scriptVimKeyMapSubDir\nvim\" $fullFilePath -Recurse -Force
+                if (Test-Path $directoryPath) {
+                    Remove-Item -Path $path -Recurse -Force
+                    Write-Host "Old nvim directory removed."
+                }
+                Copy-Item "$scriptVimKeyMapSubDir\nvim\" $path -Recurse -Force
                 Write-Host "Directory overwritten successfully."
             }
         }
@@ -68,5 +71,5 @@ foreach ($path in $paths.Keys) {
     } else {
         Write-Host "Directory does not exist: $path"
     }
-	Write-Host "------------------------------"
+    Write-Host "------------------------------"
 }
