@@ -39,7 +39,7 @@ foreach ($path in $paths.Keys) {
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                     Copy-Item "$scriptVimKeyMapSubDir\$fileName" $fullFilePath -Force
-                    Write-Host "File overwritten successfully at " + $fullFilePath + "."
+                    Write-Host ("File overwritten successfully at " + $fullFilePath)
                 }
             }
             "targetToDir" {
@@ -48,12 +48,12 @@ foreach ($path in $paths.Keys) {
                 $userChoice = $userChoice.ToLower()
                 if ($userChoice -eq "y" -or $userChoice -eq "yes") {
                     Copy-Item "$scriptVimKeyMapSubDir\$fileName" $directoryPath -Force
-                    Write-Host "File overwritten successfully at " + $fullFilePath + "."
+                    Write-Host ("File overwritten successfully at " + $fullFilePath)
                 }
             }
         }
         if ($paths[$path] -eq "nvim/") {
-            Write-Host "File exists: $directoryPath"
+            Write-Host "Directory exists: $directoryPath"
 
             $userChoice = Read-Host ("Do you want to completely remove and overwrite the nvim/ directory at " + $path + "? (y[es]/n[o])")
             $userChoice = $userChoice.ToLower()  # Normalize input
