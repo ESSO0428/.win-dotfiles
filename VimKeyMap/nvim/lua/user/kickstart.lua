@@ -108,7 +108,11 @@ require("lazy").setup({
 					F12 = "<F12>",
 				},
 			},
-
+			plugins = {
+				spelling = {
+					enabled = false,
+				},
+			},
 			-- Document existing key chains
 			spec = {
 				{ "<leader>d", group = "[D]ap" },
