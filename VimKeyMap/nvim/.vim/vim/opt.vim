@@ -26,4 +26,4 @@ if has('clipboard') && version >= 801
     \ if v:event.operator is 'y' || v:event.operator is 'd' |
     \ execute 'OSCYankRegister +' |
     \ endif
-endif  
+endif
