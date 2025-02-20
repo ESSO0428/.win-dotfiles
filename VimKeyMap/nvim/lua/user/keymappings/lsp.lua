@@ -21,5 +21,5 @@ map("gl", function()
 		vim.diagnostic.open_float(config)
 	end
 end, "Show line diagnostics")
-map("<", vim.diagnostic.goto_prev, "documentation hover")
-map(">", vim.diagnostic.goto_next, "documentation hover")
+vim.keymap.set("n", "<", vim.diagnostic.goto_prev, { silent = true, nowait = true })
+vim.keymap.set("n", ">", vim.diagnostic.goto_next, { silent = true, nowait = true })
