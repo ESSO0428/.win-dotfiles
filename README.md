@@ -43,15 +43,15 @@ Copy paste files of [./VimKeyMap/nvim/](./VimKeyMap/nvim/) to **C:\Users\Andy6\A
 `im-select.exe` is a tool to switch between input methods on Windows.
 
 - `im-select.exe` also support vscode, obsidian, neovim/lunavim (remote or wsl)
-    + For remote neovim/lunavim, need to `reverse ssh tunnel` to local machine
-        * And vimscripts setting (for my vimscript have support; not in this
-        directory; just offer user guide in here)
-    + Install directories are below
-        * **C:\Windows**
-        * **C:\Users\Andy6**
-    + Download link : [here](https://github.com/daipeihust/im-select/raw/master/win/out/x86/im-select.exe)
-        * Have `im-select.exe` in this directory, but if you want to get the latest version, you can download from the link above.
-    + Run below command will auto process
-        ```powershell
-        .\.win-dotfiles\CopyImSelectToSystemPath.ps1
-        ```
+  + For remote neovim/lunavim, need to `reverse ssh tunnel` to local machine
+    * And vimscripts setting (for my vimscript have support; not in this
+    directory; just offer user guide in here)
+  + Install directories are below
+    * **C:\Windows**
+    * **C:\Users\Andy6**
+  + Download link : [here](https://github.com/daipeihust/im-select/raw/master/win/out/x86/im-select.exe)
+    * Have `im-select.exe` in this directory, but if you want to get the latest version, you can download from the link above.
+  + Run below command will auto process
+    ```powershell
+    .\.win-dotfiles\CopyImSelectToSystemPath.ps1
+    ```
