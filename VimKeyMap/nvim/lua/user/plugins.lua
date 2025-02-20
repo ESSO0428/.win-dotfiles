@@ -1209,7 +1209,7 @@ require("lazy").setup({
 					-- [focused and unfocused]. eg: { '|', '|' }
 					separator_style = "thin",
 					enforce_regular_tabs = false,
-					always_show_bufferline = false,
+					always_show_bufferline = true,
 					hover = {
 						enabled = false, -- requires nvim 0.8+
 						delay = 200,
