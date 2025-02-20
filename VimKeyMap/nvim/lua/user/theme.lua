@@ -1,3 +1,8 @@
+vim.cmd("hi lualine_a_normal guifg=#16161e guibg=#7aa2f7")
+vim.cmd("hi lualine_b_normal guifg=#7aa2f7 guibg=#3b4261")
+vim.cmd("hi lualine_c_normal guifg=#a9b1d6 guibg=#16161e")
+vim.cmd("hi TreesitterContext guibg=#16161e")
+
 -- Reference : https://github.com/sindrets/diffview.nvim/issues/241
 vim.cmd("hi NormalNC ctermbg=none guibg=none")
 vim.cmd("hi NormalFloat ctermbg=none guibg=none")

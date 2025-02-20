@@ -34,9 +34,8 @@ set nowarn
 set number
 set cursorline
 " format tab to 4 space => not format
-set noexpandtab
-" set tabstop=2
-set tabstop=4
+" set noexpandtab
+set tabstop=2
 " set shiftwidth=2
 set shiftwidth=4
 " set softtabstop=2

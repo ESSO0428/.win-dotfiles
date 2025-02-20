@@ -1,18 +1,4 @@
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		error("Error cloning lazy.nvim:\n" .. out)
-	end
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
-
-vim.opt.spell = true
-vim.g.have_nerd_font = true
-vim.opt.listchars:append("space:·")
+-- References: https://github.com/nvim-lua/kickstart.nvim
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -963,7 +949,7 @@ require("lazy").setup({
 			--  - va)  - [V]isually select [A]round [)]paren
 			--  - yinq - [Y]ank [I]nside [N]ext [Q]uote
 			--  - ci'  - [C]hange [I]nside [']quote
-			require("mini.ai").setup({ n_lines = 500 })
+			-- require("mini.ai").setup({ n_lines = 500 })
 
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
@@ -999,6 +985,10 @@ require("lazy").setup({
 	{
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
+		config = function()
+			require("lualine").setup()
+		end,
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
@@ -1043,6 +1033,42 @@ require("lazy").setup({
 			require("user.config.breadcrumbs").setup()
 		end,
 		dependencies = { "neovim/nvim-lspconfig" },
+	},
+	{
+		"SmiteshP/nvim-navbuddy",
+		commit = "0db1d62",
+		deprecated = {
+			"neovim/nvim-lspconfig",
+			"SmiteshP/nvim-navic",
+			"MunifTanjim/nui.nvim",
+		},
+		keys = {
+			{ "<leader>uv", "<cmd>Navbuddy<cr>", desc = "Nav" },
+		},
+		config = function()
+			local actions = require("nvim-navbuddy.actions")
+			local navbuddy = require("nvim-navbuddy")
+			navbuddy.setup({
+				window = {
+					border = "double",
+				},
+				mappings = {
+					["i"] = actions.previous_sibling(),
+					["k"] = actions.next_sibling(),
+					["j"] = actions.parent(),
+					["l"] = actions.children(),
+					["I"] = actions.previous_sibling(),
+					["K"] = actions.next_sibling(),
+					["<a-Up>"] = actions.move_up(),
+					["<a-Down>"] = actions.move_down(),
+					["h"] = actions.insert_name(),
+					["H"] = actions.insert_scope(),
+					["a"] = actions.append_name(),
+					["A"] = actions.append_scope(),
+				},
+				lsp = { auto_attach = true },
+			})
+		end,
 	},
 	{
 		"akinsho/bufferline.nvim",
@@ -1210,9 +1236,9 @@ require("lazy").setup({
 				},
 			})
 			vim.cmd([[
-				set guioptions-=e " Use showtabline in gui vim
-				set sessionoptions+=tabpages,globals " store tabpages and globals in session
-			]])
+        set guioptions-=e " Use showtabline in gui vim
+        set sessionoptions+=tabpages,globals " store tabpages and globals in session
+      ]])
 		end,
 		dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
 	},
@@ -1316,6 +1342,9 @@ require("lazy").setup({
 	-- Or use telescope!
 	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 	-- you can continue same window with `<space>sr` which resumes last telescope search
+	{ "ESSO0428/vim-fugitive" },
+	{ "rbong/vim-flog" },
+	{ "sindrets/diffview.nvim" },
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1340,66 +1369,34 @@ require("lazy").setup({
 		rtp = { reset = false },
 	},
 })
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
-
-local map = function(keys, func, desc, mode)
-	mode = mode or "n"
-	vim.keymap.set(mode, keys, func, { desc = "LSP: " .. desc })
-end
-map("<leader>gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-map("gh", vim.lsp.buf.hover, "documentation hover")
--- map("gm", vim.lsp.buf.signature_help, "signature help")
-map("gm", "<cmd>lua require('lsp_signature').toggle_float_win()<cr>", "signature help")
-map("gh", vim.lsp.buf.hover, "documentation hover")
-map("g;", "<cmd>lua vim.lsp.buf.type_definition()<cr>", "Goto type definition")
-map("gp", "<cmd>lua require('goto-preview').goto_preview_type_definition()<cr>", "Goto type definition (preview)")
-map("<leader><a-o>", "<cmd>lua require('goto-preview').goto_preview_definition()<cr>", "[G]oto [D]efinition (preview)")
-map("<leader>ua", "<cmd>lua require('actions-preview').code_actions()<cr>", "Code Action")
-map("gl", function()
-	local float = vim.diagnostic.config().float
-
-	if float then
-		local config = type(float) == "table" and float or {}
-		config.scope = "line"
-
-		vim.diagnostic.open_float(config)
-	end
-end, "Show line diagnostics")
-map("<", vim.diagnostic.goto_prev, "documentation hover")
-map(">", vim.diagnostic.goto_next, "documentation hover")
-
-vim.keymap.set(
-	"x",
-	"<leader>/",
-	"<Plug>(comment_toggle_linewise_visual)",
-	{ desc = "Comment toggle linewise (visual)" }
-)
-vim.keymap.set("n", "<leader>/", "<Plug>(comment_toggle_linewise_current)", { desc = "Comment toggle current line" })
--- vim options
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-
--- signcolumn
-vim.wo.signcolumn = "auto:3-6"
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = "rounded",
-	close_events = { "BufHidden", "InsertLeave" },
-})
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = "rounded",
-})
-vim.diagnostic.config({
-	float = { border = "rounded" },
-})
-local function set_if_command_exists(cmd, value)
-	pcall(vim.cmd, cmd .. " " .. value)
-end
-set_if_command_exists("GuiWindowOpacity", "0.9")
-
-vim.cmd("hi lualine_a_normal guifg=#16161e guibg=#7aa2f7")
-vim.cmd("hi lualine_b_normal guifg=#7aa2f7 guibg=#3b4261")
-vim.cmd("hi lualine_c_normal guifg=#a9b1d6 guibg=#16161e")
-vim.cmd("hi TreesitterContext guibg=#16161e")
+-- NOTE: Here is rebinded keymaps for lazy.nvim
+-- use require cover, because lunarvim not builtin it's keymaps
+require("lazy.view.config").keys = {
+	hover = "gh",
+	diff = "d",
+	close = "q",
+	details = "<cr>",
+	profile_sort = "<C-s>",
+	profile_filter = "<C-f>",
+	abort = "<C-c>",
+	next = "]]",
+	prev = "[[",
+}
+require("lazy.view.config").commands.install = {
+	button = true,
+	desc = "Install missing plugins",
+	desc_plugin = "Install a plugin",
+	id = 2,
+	key = ">",
+	key_plugin = ">",
+	plugins = true,
+}
+require("lazy.view.config").commands.log = {
+	button = true,
+	desc = "Show recent updates",
+	desc_plugin = "Show recent updates",
+	id = 7,
+	key = "O",
+	key_plugin = "o",
+	plugins = true,
+}
