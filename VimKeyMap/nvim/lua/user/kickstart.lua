@@ -283,7 +283,6 @@ require("lazy").setup({
 			require("Comment").setup()
 		end,
 		keys = { { "gc", mode = { "n", "v" } }, { "gb", mode = { "n", "v" } } },
-		event = "User FileOpened",
 		enabled = true,
 	},
 	{
@@ -1039,19 +1038,181 @@ require("lazy").setup({
 		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
 	{
+		"SmiteshP/nvim-navic",
+		config = function()
+			require("user.config.breadcrumbs").setup()
+		end,
+		dependencies = { "neovim/nvim-lspconfig" },
+	},
+	{
+		"akinsho/bufferline.nvim",
+		config = function()
+			local function is_ft(b, ft)
+				return vim.bo[b].filetype == ft
+			end
+			local function custom_filter(buf, buf_nums)
+				local logs = vim.tbl_filter(function(b)
+					return is_ft(b, "log")
+				end, buf_nums or {})
+				if vim.tbl_isempty(logs) then
+					return true
+				end
+				local tab_num = vim.fn.tabpagenr()
+				local last_tab = vim.fn.tabpagenr("$")
+				local is_log = is_ft(buf, "log")
+				if last_tab == 1 then
+					return true
+				end
+				-- only show log buffers in secondary tabs
+				return (tab_num == last_tab and is_log) or (tab_num ~= last_tab and not is_log)
+			end
+			local function diagnostics_indicator(num, _, diagnostics, _)
+				local result = {}
+				local symbols = {
+					error = "",
+					warning = "",
+					info = "",
+				}
+				for name, count in pairs(diagnostics) do
+					if symbols[name] and count > 0 then
+						table.insert(result, symbols[name] .. " " .. count)
+					end
+				end
+				result = table.concat(result, " ")
+				return #result > 0 and result or ""
+			end
+
+			local status_ok, bufferline = pcall(require, "bufferline")
+			if not status_ok then
+				return
+			end
+
+			-- can't be set in settings.lua because default tabline would flash before bufferline is loaded
+			vim.opt.showtabline = 2
+			bufferline.setup({
+				on_config_done = nil,
+				highlights = {
+					background = {
+						italic = true,
+					},
+					buffer_selected = {
+						bold = true,
+					},
+				},
+				options = {
+					themable = true, -- whether or not bufferline highlights can be overridden externally
+					-- style_preset = preset,
+					get_element_icon = nil,
+					show_duplicate_prefix = true,
+					duplicates_across_groups = true,
+					auto_toggle_bufferline = true,
+					move_wraps_at_ends = false,
+					groups = { items = {}, options = { toggle_hidden_on_enter = true } },
+					mode = "buffers", -- set to "tabs" to only show tabpages instead
+					numbers = "none", -- can be "none" | "ordinal" | "buffer_id" | "both" | function
+					close_command = "bdelete! %d", -- can be a string | function, | false see "Mouse actions"
+					right_mouse_command = "vert sbuffer %d", -- can be a string | function, see "Mouse actions"
+					left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
+					middle_mouse_command = nil, -- can be a string | function, see "Mouse actions"
+					indicator = {
+						icon = "▎", -- this should be omitted if indicator style is not 'icon'
+						style = "icon", -- can also be 'underline'|'none',
+					},
+					buffer_close_icon = "󰅖",
+					modified_icon = "",
+					close_icon = "",
+					left_trunc_marker = "",
+					right_trunc_marker = "",
+					--- name_formatter can be used to change the buffer's label in the bufferline.
+					--- Please note some names can/will break the
+					--- bufferline so use this at your discretion knowing that it has
+					--- some limitations that will *NOT* be fixed.
+					name_formatter = function(buf) -- buf contains a "name", "path" and "bufnr"
+						-- remove extension from markdown files for example
+						if buf.name:match("%.md") then
+							return vim.fn.fnamemodify(buf.name, ":t:r")
+						end
+					end,
+					max_name_length = 18,
+					max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
+					truncate_names = true, -- whether or not tab names should be truncated
+					tab_size = 18,
+					diagnostics = "nvim_lsp",
+					diagnostics_update_in_insert = false,
+					diagnostics_indicator = diagnostics_indicator,
+					-- NOTE: this will be called a lot so don't do any heavy processing here
+					custom_filter = custom_filter,
+					offsets = {
+						{
+							filetype = "undotree",
+							text = "Undotree",
+							highlight = "PanelHeading",
+							padding = 1,
+						},
+						{
+							filetype = "NvimTree",
+							text = "Explorer",
+							highlight = "PanelHeading",
+							padding = 1,
+						},
+						{
+							filetype = "DiffviewFiles",
+							text = "Diff View",
+							highlight = "PanelHeading",
+							padding = 1,
+						},
+						{
+							filetype = "flutterToolsOutline",
+							text = "Flutter Outline",
+							highlight = "PanelHeading",
+						},
+						{
+							filetype = "lazy",
+							text = "Lazy",
+							highlight = "PanelHeading",
+							padding = 1,
+						},
+					},
+					color_icons = true, -- whether or not to add the filetype icon highlights
+					show_buffer_icons = true, -- disable filetype icons for buffers
+					show_buffer_close_icons = true,
+					show_close_icon = false,
+					show_tab_indicators = false,
+					persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
+					-- can also be a table containing 2 custom separators
+					-- [focused and unfocused]. eg: { '|', '|' }
+					separator_style = "thin",
+					enforce_regular_tabs = false,
+					always_show_bufferline = false,
+					hover = {
+						enabled = false, -- requires nvim 0.8+
+						delay = 200,
+						reveal = { "close" },
+					},
+					sort_by = "id",
+					debug = { logging = false },
+				},
+			})
+			if bufferline.on_config_done then
+				bufferline.on_config_done()
+			end
+			require("tabline").on_session_load_post()
+			vim.o.tabline = "%!v:lua.nvim_bufferline() .. v:lua.require'tabline'.tabline_tabs()"
+		end,
+	},
+	{
 		"ESSO0428/tabline.nvim",
 		config = function()
 			require("tabline").setup({
-				-- enable = false,
-				enable = true,
+				enable = false,
 				options = {
 					show_tabs_always = true,
 				},
 			})
 			vim.cmd([[
-	       set guioptions-=e " Use showtabline in gui vim
-	       set sessionoptions+=tabpages,globals " store tabpages and globals in session
-	     ]])
+				set guioptions-=e " Use showtabline in gui vim
+				set sessionoptions+=tabpages,globals " store tabpages and globals in session
+			]])
 		end,
 		dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
 	},

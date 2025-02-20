@@ -23,108 +23,108 @@ vim.api.nvim_create_user_command("FileTypeOnRfcSemicolon", "set filetype=rfc_sem
 -----------------------------------------------------------------
 -- 添加更多映射
 my_ext_syntax_map = {
-	["csv"] = "csv",
-	["txt"] = "tsv",
-	["tab"] = "tsv",
+  ["csv"] = "csv",
+  ["txt"] = "tsv",
+  ["tab"] = "tsv",
 }
 function toggle_syntax()
-	local current_filetype = vim.bo.filetype
-	local ext = vim.fn.expand("%:e")
-	if current_filetype == "" and ext == "" then
-		print("Failed : filetype is empty")
-		return
-	elseif current_filetype == "" or current_filetype == "text" then
-		local new_filetype = my_ext_syntax_map[ext]
-		current_filetype = new_filetype
-		if not new_filetype then
-			print("Failed: unknown file type")
-			return
-		end
+  local current_filetype = vim.bo.filetype
+  local ext = vim.fn.expand("%:e")
+  if current_filetype == "" and ext == "" then
+    print("Failed : filetype is empty")
+    return
+  elseif current_filetype == "" or current_filetype == "text" then
+    local new_filetype = my_ext_syntax_map[ext]
+    current_filetype = new_filetype
+    if not new_filetype then
+      print("Failed: unknown file type")
+      return
+    end
 
-		vim.cmd("set filetype=" .. new_filetype)
-	end
+    vim.cmd("set filetype=" .. new_filetype)
+  end
 
-	local current_syntax = vim.api.nvim_get_option_value("syntax", { scope = "local" })
-	local datatable_filetypes =
-		{ "csv", "tsv", "csv_semicolon", "csv_whitespace", "csv_pipe", "rfc_csv", "rfc_semicolon" }
-	local is_match_filetype = vim.fn.index(datatable_filetypes, current_filetype) ~= -1 and 1 or -1
+  local current_syntax = vim.api.nvim_get_option_value("syntax", { scope = "local" })
+  local datatable_filetypes =
+    { "csv", "tsv", "csv_semicolon", "csv_whitespace", "csv_pipe", "rfc_csv", "rfc_semicolon" }
+  local is_match_filetype = vim.fn.index(datatable_filetypes, current_filetype) ~= -1 and 1 or -1
 
-	if current_syntax == "" or current_syntax == "off" then
-		vim.b.current_buffer_syntax = "on"
-		vim.cmd("setlocal syntax=on")
-		if is_match_filetype ~= -1 then
-			vim.cmd("TSBufDisable highlight")
-			vim.cmd("set syntax=" .. current_filetype)
-			vim.cmd("set laststatus=2")
-		end
-		print("syntax on")
-	else
-		vim.b.current_buffer_syntax = "off"
-		vim.cmd("setlocal syntax=off")
-		vim.cmd("set laststatus=3")
-		if is_match_filetype ~= -1 then
-			vim.cmd("TSBufEnable highlight")
-		end
-		print("syntax off")
-	end
+  if current_syntax == "" or current_syntax == "off" then
+    vim.b.current_buffer_syntax = "on"
+    vim.cmd("setlocal syntax=on")
+    if is_match_filetype ~= -1 then
+      vim.cmd("TSBufDisable highlight")
+      vim.cmd("set syntax=" .. current_filetype)
+      vim.cmd("set laststatus=2")
+    end
+    print("syntax on")
+  else
+    vim.b.current_buffer_syntax = "off"
+    vim.cmd("setlocal syntax=off")
+    vim.cmd("set laststatus=3")
+    if is_match_filetype ~= -1 then
+      vim.cmd("TSBufEnable highlight")
+    end
+    print("syntax off")
+  end
 end
 
 -- NOTE: for link highlight toggle
 function toggle_conceal()
-	-- 初始化当前 buffer 的 conceal 状态，如果它还不存在
-	if vim.b.current_buffer_conceal_change == nil or vim.b.current_buffer_conceal_change == "" then
-		vim.b.current_buffer_conceal_change = "off"
-	end
+  -- 初始化当前 buffer 的 conceal 状态，如果它还不存在
+  if vim.b.current_buffer_conceal_change == nil or vim.b.current_buffer_conceal_change == "" then
+    vim.b.current_buffer_conceal_change = "off"
+  end
 
-	-- 如果 conceallevel 已经被更改，恢复到原始状态
-	if vim.b.current_buffer_conceal_change == "on" then
-		if vim.bo.filetype == "markdown" and vim.g.MarkdownNvim ~= nil then
-			require("render-markdown").enable()
-		end
-		vim.b.current_buffer_conceal_change = "off"
-		vim.o.conceallevel = vim.b.original_conceallevel
-		print("conceal 0 → " .. vim.b.original_conceallevel .. " (default)")
-	else
-		if vim.bo.filetype == "markdown" and vim.g.MarkdownNvim ~= nil then
-			require("render-markdown").disable()
-		end
-		-- 如果还没更改过，保存当前 conceallevel 并设置为 0
-		vim.b.current_buffer_conceal_change = "on"
-		vim.b.original_conceallevel = vim.o.conceallevel
-		vim.o.conceallevel = 0
-		print("conceal " .. (vim.b.original_conceallevel or 0) .. " (default)" .. " → 0")
-	end
+  -- 如果 conceallevel 已经被更改，恢复到原始状态
+  if vim.b.current_buffer_conceal_change == "on" then
+    if vim.bo.filetype == "markdown" and vim.g.MarkdownNvim ~= nil then
+      require("render-markdown").enable()
+    end
+    vim.b.current_buffer_conceal_change = "off"
+    vim.o.conceallevel = vim.b.original_conceallevel
+    print("conceal 0 → " .. vim.b.original_conceallevel .. " (default)")
+  else
+    if vim.bo.filetype == "markdown" and vim.g.MarkdownNvim ~= nil then
+      require("render-markdown").disable()
+    end
+    -- 如果还没更改过，保存当前 conceallevel 并设置为 0
+    vim.b.current_buffer_conceal_change = "on"
+    vim.b.original_conceallevel = vim.o.conceallevel
+    vim.o.conceallevel = 0
+    print("conceal " .. (vim.b.original_conceallevel or 0) .. " (default)" .. " → 0")
+  end
 end
 
 function ReStartNotTableFileTypeLayout(action)
-	if vim.fn.getcmdline() ~= "" then
-		return
-	end
-	local datatable_filetypes =
-		{ "csv", "tsv", "csv_semicolon", "csv_whitespace", "csv_pipe", "rfc_csv", "rfc_semicolon" }
-	local int_bool = -1
-	if action == "leave" then
-		int_bool = 1
-	end
-	local is_match_filetype = vim.fn.index(datatable_filetypes, vim.bo.filetype) ~= -1 and 1 or -1
-	if is_match_filetype == int_bool then
-		-- vim.cmd("lua require('lualine').setup()")
-		vim.cmd("set laststatus=3")
-	end
+  if vim.fn.getcmdline() ~= "" then
+    return
+  end
+  local datatable_filetypes =
+    { "csv", "tsv", "csv_semicolon", "csv_whitespace", "csv_pipe", "rfc_csv", "rfc_semicolon" }
+  local int_bool = -1
+  if action == "leave" then
+    int_bool = 1
+  end
+  local is_match_filetype = vim.fn.index(datatable_filetypes, vim.bo.filetype) ~= -1 and 1 or -1
+  if is_match_filetype == int_bool then
+    -- vim.cmd("lua require('lualine').setup()")
+    vim.cmd("set laststatus=3")
+  end
 end
 
 function SetupMarkdownBufferSyntaxConceal()
-	-- 檢查文件類型是否為 markdown
-	if vim.bo.filetype == "markdown" then
-		-- 設置語法高亮
-		vim.cmd("setlocal syntax=on")
+  -- 檢查文件類型是否為 markdown
+  if vim.bo.filetype == "markdown" then
+    -- 設置語法高亮
+    vim.cmd("setlocal syntax=on")
 
-		-- 檢查緩衝區類型是否為 nofile
-		if vim.bo.buftype == "nofile" then
-			-- 設置 concealcursor
-			vim.cmd("setlocal concealcursor=nv")
-		end
-	end
+    -- 檢查緩衝區類型是否為 nofile
+    if vim.bo.buftype == "nofile" then
+      -- 設置 concealcursor
+      vim.cmd("setlocal concealcursor=nv")
+    end
+  end
 end
 vim.keymap.set("n", "sn", "<cmd>lua toggle_syntax()<cr>", { desc = "Toggle Syntax" })
 vim.keymap.set("n", "sc", "<cmd>lua toggle_conceal()<cr>", { desc = "Toggle Conceal" })
@@ -147,9 +147,9 @@ vim.cmd([[
 ]])
 
 local function format_json(opts)
-	local line1 = opts.line1 or 1
-	local line2 = opts.line2 or vim.api.nvim_buf_line_count(0)
-	vim.cmd(line1 .. "," .. line2 .. "!xargs -0 -I {} node -e 'console.log(JSON.stringify({}, null, 2));'")
+  local line1 = opts.line1 or 1
+  local line2 = opts.line2 or vim.api.nvim_buf_line_count(0)
+  vim.cmd(line1 .. "," .. line2 .. "!xargs -0 -I {} node -e 'console.log(JSON.stringify({}, null, 2));'")
 end
 
 vim.api.nvim_create_user_command("FormatJson", format_json, { range = "%" })
