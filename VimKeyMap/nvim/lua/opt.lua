@@ -36,6 +36,10 @@ vim.opt.tabstop = 2
 -- signcolumn
 vim.wo.signcolumn = "auto:3-6"
 
+-- conceal
+vim.opt.conceallevel = 2
+vim.opt.concealcursor = 'nc'
+
 -- lunarvim default options
 local default_options = {
   backup = false, -- creates a backup file

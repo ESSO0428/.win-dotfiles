@@ -55,4 +55,3 @@ Copy paste files of [./VimKeyMap/nvim/](./VimKeyMap/nvim/) to **C:\Users\Andy6\A
         ```powershell
         .\.win-dotfiles\CopyImSelectToSystemPath.ps1
         ```
-

@@ -4,6 +4,8 @@ vim.cmd("hi lualine_c_normal guifg=#a9b1d6 guibg=#16161e")
 vim.cmd("hi TreesitterContext guibg=#16161e")
 
 -- Reference : https://github.com/sindrets/diffview.nvim/issues/241
+vim.cmd("exec 'hi FoldColumn guibg=none guifg=' . synIDattr(synIDtrans(hlID('Folded')), 'fg', 'gui')")
+vim.cmd("hi Folded guifg=#7aa2f7 guibg=#3b4261")
 vim.cmd("hi NormalNC ctermbg=none guibg=none")
 vim.cmd("hi NormalFloat ctermbg=none guibg=none")
 vim.cmd("hi BufferLineBufferSelected guifg=#3ab6f0")
