@@ -1400,3 +1400,25 @@ require("lazy.view.config").commands.log = {
 	key_plugin = "o",
 	plugins = true,
 }
+
+local function set_if_command_exists(cmd, value)
+	pcall(vim.cmd, cmd .. " " .. value)
+end
+set_if_command_exists("GuiWindowOpacity", "0.9")
+
+local transparent_highlights = {
+	"Normal",
+	"NormalNC",
+	"LineNr",
+	"Folded",
+	"NonText",
+	"SpecialKey",
+	"VertSplit",
+	"SignColumn",
+	"EndOfBuffer",
+	"TablineFill", -- this might be preference
+}
+
+for _, hl in ipairs(transparent_highlights) do
+	vim.cmd.highlight(hl .. " guibg=NONE ctermbg=NONE")
+end
