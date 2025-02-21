@@ -1,3 +1,7 @@
+local map = function(keys, func, desc, mode)
+	mode = mode or "n"
+	vim.keymap.set(mode, keys, func, { desc = "LSP: " .. desc })
+end
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>rw",
@@ -18,3 +22,9 @@ vim.keymap.set(
 	{ desc = "Comment toggle linewise (visual)" }
 )
 vim.keymap.set("n", "<leader>/", "<Plug>(comment_toggle_linewise_current)", { desc = "Comment toggle current line" })
+
+-- Bufferline
+map("<c-j>", "<cmd>BufferLineCyclePrev<cr>", "Bufferline Prev Buffer")
+map("<c-l>", "<cmd>BufferLineCycleNext<cr>", "Bufferline Next Buffer")
+map("<a-j>", "<cmd>BufferLineMovePrev<cr>", "Bufferline Move Buffer to Prev")
+map("<a-l>", "<cmd>BufferLineMoveNext<cr>", "Bufferline Move Buffer to Next")
