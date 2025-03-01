@@ -95,10 +95,26 @@ require("lazy").setup({
 				},
 			},
 			plugins = {
+				marks = false, -- shows a list of your marks on ' and `
+				registers = false, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
 				spelling = {
 					enabled = false,
+					suggestions = 20,
+				}, -- use which-key for spelling hints
+				-- the presets plugin, adds help for a bunch of default keybindings in Neovim
+				-- No actual key bindings are created
+				presets = {
+					operators = false, -- adds help for operators like d, y, ...
+					motions = false, -- adds help for motions
+					text_objects = false, -- help for text objects triggered after entering an operator
+					windows = false, -- default bindings on <c-w>
+					nav = false, -- misc bindings to work with windows
+					z = false, -- bindings for folds, spelling and others prefixed with z
+					g = false, -- bindings for prefixed with g
 				},
 			},
+			-- triggers = "auto", -- automatically setup triggers
+			triggers = { "<leader>" }, -- or specify a list manually
 			-- Document existing key chains
 			spec = {
 				{ "<leader>d", group = "[D]ap" },
@@ -1310,7 +1326,22 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"lukas-reineke/headlines.nvim",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+		config = true, -- or `opts = {}`
+	},
+	-- NOTE: The handling of `concealcursor` in LSP hover markdown rendering
+	-- was changed after commit 0022a57. The previous behavior allowed
+	-- concealed elements to be visible, but the new version hides them
+	-- by default.
+	-- If you prefer the old behavior in LSP hover windows, check issue #312
+	-- for possible workarounds: https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/312
+	-- NOTE: The behavior of `concealcursor` in floating windows changed after commit 0022a57.
+	-- If you prefer the old behavior, check issue #312 for possible workarounds:
+	-- [#312](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/312)
+	{
 		"MeanderingProgrammer/markdown.nvim",
+		commit = "0022a57",
 		main = "render-markdown",
 		opts = {},
 		name = "render-markdown", -- Only needed if you have another plugin named markdown.nvim
