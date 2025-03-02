@@ -74,6 +74,10 @@ M.breadcrumbs_config = {
 			Variable = icons.kind.Variable .. " ",
 		},
 		highlight = true,
+		lsp = {
+			auto_attach = true,
+			preference = nil,
+		},
 		separator = " " .. icons.ui.ChevronRight .. " ",
 		depth_limit = 0,
 		depth_limit_indicator = "..",

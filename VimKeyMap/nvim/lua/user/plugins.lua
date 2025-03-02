@@ -1088,6 +1088,7 @@ require("lazy").setup({
 		--    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
 		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
+	{ "MunifTanjim/nui.nvim" },
 	{
 		"SmiteshP/nvim-navic",
 		config = function()
@@ -1097,7 +1098,6 @@ require("lazy").setup({
 	},
 	{
 		"SmiteshP/nvim-navbuddy",
-		commit = "0db1d62",
 		deprecated = {
 			"neovim/nvim-lspconfig",
 			"SmiteshP/nvim-navic",
@@ -1127,7 +1127,10 @@ require("lazy").setup({
 					["a"] = actions.append_name(),
 					["A"] = actions.append_scope(),
 				},
-				lsp = { auto_attach = true },
+				lsp = {
+					auto_attach = true, -- If set to true, you don't need to manually use attach function
+					preference = nil, -- list of lsp server names in order of preference
+				},
 			})
 		end,
 	},
