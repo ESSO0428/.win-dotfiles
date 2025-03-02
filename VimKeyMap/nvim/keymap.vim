@@ -73,6 +73,42 @@ autocmd BufRead,BufNewFile *.md inoremap <buffer> ,, <++>
 
 let g:SetWrapKeymapExcludeArray = ['minifiles']
 
+" Markdown code block text object
+vnoremap <silent> hc :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+vnoremap <silent> ,c :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+" vnoremap <silent> o :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+onoremap <silent> hc :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+onoremap <silent> ,c :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+"" onoremap <silent> o :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>
+nnoremap <silent> yo :<C-U>call <SID>MdCodeBlockTextObj('i')<cr>y
+
+vnoremap <silent> ac :<C-U>call <SID>MdCodeBlockTextObj('a')<cr>
+" vnoremap <silent> O :<C-U>call <SID>MdCodeBlockTextObj('a')<cr>
+onoremap <silent> ac :<C-U>call <SID>MdCodeBlockTextObj('a')<cr>
+"" onoremap <silent> O :<C-U>call <SID>MdCodeBlockTextObj('a')<cr>
+nnoremap <silent> yO :<C-U>call <SID>MdCodeBlockTextObj('a')<cr>y
+
+function! s:MdCodeBlockTextObj(type) abort
+  " the parameter type specify whether it is inner text objects or arround
+  " text objects.
+  let start_row = searchpos('\s*```', 'bn')[0]
+  let end_row = searchpos('\s*```', 'n')[0]
+
+  " Check if valid positions are found
+  if start_row == 0 || end_row == 0 || start_row >= end_row
+    return
+  endif
+
+  if a:type ==# 'i'
+    let start_row += 1
+    let end_row -= 1
+  endif
+  " echo a:type start_row end_row
+
+  call setpos("'<", [0, start_row, 1, 0])
+  call setpos("'>", [0, end_row, 1, 0])
+  execute 'normal! `<V`>'
+endfunction
 nnoremap Q :qa<CR>
 nnoremap S :w<CR>
 " Open the vimrc file anytime

@@ -142,3 +142,9 @@ vim.cmd("hi DiffDeleteText gui=none guifg=none guibg=#5A1D1D")
 -- "DiffChange:DiffAdd",
 -- "DiffText:DiffAddText",
 vim.cmd("hi DiffAddText gui=none guifg=none guibg=#2C6468")
+
+-- Stolen from Akinsho
+vim.api.nvim_create_autocmd("TextYankPost", {
+	pattern = "*",
+	command = "silent! lua vim.highlight.on_yank{higroup='IncSearch', timeout=200}",
+})
