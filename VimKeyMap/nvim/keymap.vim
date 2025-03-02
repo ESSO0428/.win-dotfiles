@@ -397,38 +397,27 @@ function! SetWrapKeymaps()
   endif
 endfunction
 
-function! ModeDetail()
-  let l:current_mode = mode()
-  return l:current_mode ==# 'n' ? 'NORMAL' :
-        \ l:current_mode ==# 'v' ? 'VISUAL' :
-        \ l:current_mode ==# 'V' ? 'V-LINE' :
-        \ l:current_mode ==# "\<C-V>" ? 'V-BLOCK' :
-        \ l:current_mode ==# 'i' ? 'INSERT' :
-        \ l:current_mode ==# 'R' ? 'REPLACE' :
-        \ l:current_mode ==# 'c' ? 'COMMAND' :
-        \ l:current_mode ==# 't' ? 'TERMINAL' :
-        \ 'UNKNOWN'
-endfunction
-
-function! SetStatusline()
-    set statusline=%#StatusLine#
-    set statusline+=%{ModeDetail()}
-	set statusline+=\ > 
-    set statusline+=%=%#StatusLine#
-    set statusline+=\ %{getcwd()}
-    set statusline+=\ <\ %{&encoding}
-    set statusline+=\ <\ %{&fileformat}
-    set statusline+=\ <\ %{&filetype}
-    set statusline+=\ <\ PID:%{getpid()}
-    set statusline+=\ <\ %l:%c
-    set statusline+=\ <\ %p%%/%L
-endfunction
-
-call SetStatusline()
-
 " 每次切換緩衝區或打開新文件時執行 SetWrapKeymaps 函數
 autocmd BufEnter * call SetWrapKeymaps()
 autocmd OptionSet wrap call SetWrapKeymaps()
+
+function! SendInputMethodCommandToLocal(mode)
+  " NOTE: 這裡引入 exclude filetpe 排除 im-select 在 nvimtree 和 telescope 交互時的會造成的 window-picker 的開檔錯誤
+  if &ft == 'TelescopePrompt'
+    return
+  endif
+  " 根據模式構建命令
+  if a:mode == "insert"
+    let command = ["im-select.exe", "com.apple.keylayout.ABC"]
+  else
+    let command = ["im-select.exe", "1033"]
+  endif
+  " NOTE: 修改原先的 system 成 jobstart，以避免阻塞 vim (這樣即使是 1 秒的 nc 也不會影響 vim 的使用體驗
+  call jobstart(command, {'detach': v:true})
+endfunction
+
+autocmd InsertEnter * call SendInputMethodCommandToLocal("insert")
+autocmd InsertLeave * call SendInputMethodCommandToLocal("normal")
 
 " === window move ===
 nnoremap <a-e>l :wincmd r<CR>

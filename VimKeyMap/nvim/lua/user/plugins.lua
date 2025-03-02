@@ -1335,10 +1335,7 @@ require("lazy").setup({
 	-- concealed elements to be visible, but the new version hides them
 	-- by default.
 	-- If you prefer the old behavior in LSP hover windows, check issue #312
-	-- for possible workarounds: https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/312
-	-- NOTE: The behavior of `concealcursor` in floating windows changed after commit 0022a57.
-	-- If you prefer the old behavior, check issue #312 for possible workarounds:
-	-- [#312](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/312)
+	-- for possible workarounds: [#312](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/312)
 	{
 		"MeanderingProgrammer/markdown.nvim",
 		commit = "0022a57",
