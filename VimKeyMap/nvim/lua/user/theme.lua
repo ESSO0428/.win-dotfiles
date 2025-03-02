@@ -25,6 +25,7 @@ vim.cmd("hi WindowPickerWinBarNC ctermfg=15 ctermbg=4 gui=bold guifg=#ededed gui
 vim.cmd("hi @include.python guifg=#c586c0")
 vim.cmd("hi pythonInclude guifg=#c586c0")
 vim.cmd("hi @keyword.import guifg=#c586c0")
+vim.cmd("hi Keyword cterm=italic gui=italic guifg=#9d7cd8")
 vim.cmd("hi @Keyword cterm=italic gui=italic guifg=#9d7cd8")
 vim.cmd("hi @keyword.import guifg=#c586c0")
 vim.cmd("hi link @keyword.operator Keyword")
