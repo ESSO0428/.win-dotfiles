@@ -12,7 +12,7 @@
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+	{ "tpope/vim-sleuth" }, -- Detect tabstop and shiftwidth automatically
 
 	-- NOTE: Plugins can also be added by using a table,
 	-- with the first argument being the link and the following
@@ -20,6 +20,51 @@ require("lazy").setup({
 	--
 	-- Use `opts = {}` to force a plugin to be loaded.
 	--
+	{ "tpope/vim-surround" },
+	{
+		"rhysd/clever-f.vim",
+		config = function()
+			vim.keymap.set("n", ";", "<Plug>(clever-f-repeat-forward)", {})
+			vim.keymap.set("n", ",", "<Plug>(clever-f-repeat-back)", {})
+		end,
+	},
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {
+			config = nil,
+			search = {
+				mode = "fuzzy",
+			},
+			modes = {
+				char = { enabled = false },
+				search = {
+					enabled = false,
+				},
+			},
+		},
+    -- stylua: ignore
+    keys = {
+      { "<leader>f", mode = { "n", "o", "x" }, function() require("flash").jump() end,       desc = "Flash" },
+      { "<leader>F", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      -- { "r",         mode = "o",               function() require("flash").remote() end,     desc = "Remote Flash" },
+      -- {
+      --   "R",
+      --   mode = { "o", "x" },
+      --   function() require("flash").treesitter_search() end,
+      --   desc =
+      --   "Treesitter Search"
+      -- },
+      {
+        "<a-f>",
+        mode = { "c" },
+        function() require("flash").toggle() end,
+        desc =
+        "Toggle Flash Search"
+      }
+    },
+	},
 	{ "LunarVim/bigfile.nvim" },
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`. This is equivalent to the following Lua:

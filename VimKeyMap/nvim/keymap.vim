@@ -33,13 +33,13 @@ inoremap <a-k> <c-n>
 set nowarn
 set number
 set cursorline
-" format tab to 4 space => not format
-" set noexpandtab
+" format tab to 4 space
+set expandtab
 set tabstop=2
-" set shiftwidth=2
-set shiftwidth=4
-" set softtabstop=2
-set softtabstop=4
+set shiftwidth=2
+" set shiftwidth=4
+set softtabstop=2
+" set softtabstop=4
 set autoindent
 
 
