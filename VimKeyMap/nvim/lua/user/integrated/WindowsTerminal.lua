@@ -4,7 +4,7 @@ local M = {}
 -- 定义一个函数来查找 Windows Terminal 的 settings.json 文件路径并打开它
 function M.find_and_edit_terminal_settings()
   -- 使用 `io.popen` 调用 `where wt.exe` 获取路径
-  local wt_path_handle = io.popen('where wt.exe 2>nul')
+  local wt_path_handle = io.popen("where wt.exe 2>nul")
   if not wt_path_handle then
     print("Failed to execute command to find wt.exe.")
     return
@@ -25,25 +25,49 @@ function M.find_and_edit_terminal_settings()
   if user_dir then
     -- 构建 Microsoft.WindowsTerminalPreview 目录的位置
     local base_dir = string.format("C:/Users/%s/AppData/Local/Packages/", user_dir)
-    local command = 'Get-ChildItem -Path "' .. base_dir .. '" -Filter "Microsoft.WindowsTerminalPreview*" -Directory | Select-Object -ExpandProperty FullName'
+    local command = 'Get-ChildItem -Path "'
+      .. base_dir
+      .. '" -Filter "Microsoft.WindowsTerminal*" -Directory | Select-Object -ExpandProperty FullName'
 
-    local terminal_dir_handle = io.popen('pwsh -Command "' .. command .. '"')
+    local terminal_dirs_handle = io.popen('pwsh -Command "' .. command .. '"')
 
-    if not terminal_dir_handle then
+    if not terminal_dirs_handle then
       print("Failed to locate the Windows Terminal directory.")
       return
     end
 
-    local terminal_dir = terminal_dir_handle:read("*a"):gsub("\n", "")
-    terminal_dir_handle:close()
+    local results = {}
+    for line in terminal_dirs_handle:lines() do
+      table.insert(results, line)
+    end
+    terminal_dirs_handle:close()
 
-    if terminal_dir == "" then
-      print("Microsoft.WindowsTerminalPreview directory not found.")
+    if results == "" then
+      print("Microsoft.WindowsTerminal* directory not found.")
       return
     end
 
+    local input_message = ""
+    local input_message_table = {}
+    for i, dir in ipairs(results) do
+      table.insert(input_message_table, string.format("%d. %s\\LocalState\\settings.json", i, dir))
+    end
+    input_message = table.concat(input_message_table, "\n")
+
     -- 构建 settings.json 文件的完整路径
-    local settings_path = terminal_dir .. "/LocalState/settings.json"
+    local choice = 0
+    if #results == 1 then
+      choice = 1
+    else
+      choice =
+        tonumber(vim.fn.input("Select want to open settings.json:\n" .. input_message .. "\nInput number: "))
+      if not choice or choice < 1 or choice > #results then
+        print("\nInvalid Number")
+        return
+      end
+    end
+    local selected_dir = results[choice]
+    local settings_path = selected_dir .. "/LocalState/settings.json"
 
     -- 检查文件是否存在
     local file = io.open(settings_path, "r")
