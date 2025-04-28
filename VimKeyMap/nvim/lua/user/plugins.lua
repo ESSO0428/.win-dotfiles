@@ -156,6 +156,7 @@ require("lazy").setup({
 					nav = false, -- misc bindings to work with windows
 					z = false, -- bindings for folds, spelling and others prefixed with z
 					g = false, -- bindings for prefixed with g
+					h = false, -- bindings for hydra with h
 				},
 			},
 			-- triggers = "auto", -- automatically setup triggers
@@ -1542,6 +1543,7 @@ require("lazy").setup({
 	{ "ESSO0428/vim-fugitive" },
 	{ "rbong/vim-flog" },
 	{ "sindrets/diffview.nvim" },
+	{ "nvimtools/hydra.nvim" },
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
