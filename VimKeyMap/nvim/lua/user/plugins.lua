@@ -1605,6 +1605,10 @@ local function set_if_command_exists(cmd, value)
 end
 set_if_command_exists("GuiWindowOpacity", "0.9")
 
+if vim.fn.exists("g:GuiLoaded") == 1 then
+	vim.cmd("source $VIMRUNTIME/mswin.vim")
+end
+
 local transparent_highlights = {
 	"Normal",
 	"NormalNC",

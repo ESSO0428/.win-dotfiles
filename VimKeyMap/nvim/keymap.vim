@@ -221,9 +221,12 @@ nnoremap <silent> <a-m> :set list!<cr>
 
 nnoremap <a-v> <c-v>
 
-inoremap <c-v> <c-r>+
-cnoremap <c-v> <c-r>+
-nnoremap <c-v> p
+" inoremap <c-v> <c-r>+
+" cnoremap <c-v> <c-r>+
+" nnoremap <c-v> p
+if exists('g:GuiLoaded')
+  source $VIMRUNTIME/mswin.vim
+endif
 nnoremap <c-o> 10<C-E>
 nnoremap <c-u> 10<C-Y>
 " ==================== Cursor Movement ====================
