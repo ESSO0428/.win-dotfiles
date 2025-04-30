@@ -1605,8 +1605,19 @@ local function set_if_command_exists(cmd, value)
 end
 set_if_command_exists("GuiWindowOpacity", "0.9")
 
-if vim.fn.exists("g:GuiLoaded") == 1 then
-	vim.cmd("source $VIMRUNTIME/mswin.vim")
+if vim.g.GuiLoaded then
+	-- Ref: $VIMRUNTIME/mswin.vim
+	if vim.fn.has("clipboard") == 1 then
+		vim.keymap.set("", "<C-V>", '"+gP', { noremap = true })
+		vim.keymap.set("c", "<C-V>", "<C-R>+", { noremap = true })
+		vim.cmd([[
+			exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
+			exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+		]])
+	else
+		vim.keymap.set("", "<C-V>", "gP", { noremap = true })
+		vim.keymap.set("i", "<C-V>", '<C-R>"', { noremap = true })
+	end
 end
 
 local transparent_highlights = {

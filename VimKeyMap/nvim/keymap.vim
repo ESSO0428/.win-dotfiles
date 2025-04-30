@@ -225,7 +225,16 @@ nnoremap <a-v> <c-v>
 " cnoremap <c-v> <c-r>+
 " nnoremap <c-v> p
 if exists('g:GuiLoaded')
-  source $VIMRUNTIME/mswin.vim
+  " Ref: $VIMRUNTIME/mswin.vim
+  if has("clipboard")
+    map <C-V> "+gP
+    cmap <C-V> <C-R>+
+    exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
+    exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+  else
+    noremap <C-V> gP
+    inoremap <C-V> <C-R>"
+  endif
 endif
 nnoremap <c-o> 10<C-E>
 nnoremap <c-u> 10<C-Y>
