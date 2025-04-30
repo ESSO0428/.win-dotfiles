@@ -1612,7 +1612,8 @@ if vim.g.GuiLoaded then
 		vim.keymap.set("c", "<C-V>", "<C-R>+", { noremap = true })
 		vim.cmd([[
 			exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
-			exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+			" exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+			exe 'vnoremap <script> <C-V> p'
 		]])
 	else
 		vim.keymap.set("", "<C-V>", "gP", { noremap = true })

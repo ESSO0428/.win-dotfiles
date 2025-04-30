@@ -230,7 +230,8 @@ if exists('g:GuiLoaded')
     map <C-V> "+gP
     cmap <C-V> <C-R>+
     exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
-    exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+    " exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+    exe 'vnoremap <script> <C-V> p'
   else
     noremap <C-V> gP
     inoremap <C-V> <C-R>"
