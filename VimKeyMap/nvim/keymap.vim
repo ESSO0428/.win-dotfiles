@@ -242,7 +242,7 @@ if has('gui_running')
   " Ref: $VIMRUNTIME/mswin.vim
   if has("clipboard")
     map <silent><C-V> :<C-U>call PasteWithoutTrailingNewline("n")<CR>
-    cmap <silent><C-V> <C-R>+
+    cmap <C-V> <C-R>+
     " exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
     inoremap <expr> <C-V> PasteWithoutTrailingNewline("i")
     " exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
