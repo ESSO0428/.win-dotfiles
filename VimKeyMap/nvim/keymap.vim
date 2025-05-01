@@ -224,21 +224,29 @@ nnoremap <a-v> <c-v>
 " inoremap <c-v> <c-r>+
 " cnoremap <c-v> <c-r>+
 " nnoremap <c-v> p
-function! PasteWithoutTrailingNewline()
+function! PasteWithoutTrailingNewline(mode) abort
   let l:original = @+
   let @+ = substitute(@+, '\n$', '', 'g')
-  normal! p
+
+  if a:mode ==# 'i'
+    let l:clean = @+
+    let @+ = l:original
+    return l:clean
+  else
+    normal! p
+  endif
+
   let @+ = l:original
 endfunction
 if has('gui_running')
   " Ref: $VIMRUNTIME/mswin.vim
   if has("clipboard")
-    map <C-V> :<C-U>call PasteWithoutTrailingNewline()<CR>
-    cmap <C-V> <C-R>+
+    map <silent><C-V> :<C-U>call PasteWithoutTrailingNewline("n")<CR>
+    cmap <silent><C-V> <C-R>+
     " exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
-    exe 'inoremap <script> <C-V> <C-O>:call PasteWithoutTrailingNewline()<CR>'
+    inoremap <expr> <C-V> PasteWithoutTrailingNewline("i")
     " exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
-    exe 'vnoremap <script> <C-V> p'
+    vnoremap <script> <C-V> p
   else
     noremap <C-V> gP
     inoremap <C-V> <C-R>"
