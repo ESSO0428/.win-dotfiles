@@ -223,15 +223,57 @@ require("lazy").setup({
 
 			-- [[ Configure Telescope ]]
 			-- See `:help telescope` and `:help telescope.setup()`
+
+			local actions = require("telescope.actions")
+			local action_layout = require("telescope.actions.layout")
 			require("telescope").setup({
 				-- You can put your default mappings / updates / etc. in here
 				--  All the info you're looking for is in `:help telescope.setup()`
 				--
-				-- defaults = {
-				--   mappings = {
-				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-				--   },
-				-- },
+				defaults = {
+					mappings = {
+						-- i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+						i = {
+							["<c-v>"] = function()
+								local paste = vim.fn["PasteWithoutTrailingNewline"]
+								local text = paste("i")
+								vim.api.nvim_put({ text }, "c", true, true)
+							end,
+							-- ['<cr>'] = function()
+							--   vim.api.nvim_input('<Esc>')
+							--   vim.defer_fn(function()
+							--     vim.api.nvim_input('<cr>')
+							--   end, 100)
+							-- end,
+							["<ScrollWheelUp>"] = actions.move_selection_previous,
+							["<ScrollWheelDown>"] = actions.move_selection_next,
+							["<LeftMouse>"] = function()
+								vim.defer_fn(function()
+									vim.api.nvim_input("<cr>")
+								end, 100)
+							end,
+							["<C-q>"] = function(...)
+								actions.smart_send_to_qflist(...)
+								actions.open_qflist(...)
+							end,
+							["<c-k>"] = function(...) end,
+							["<C-j>"] = function(...)
+								actions.toggle_selection(...)
+								actions.move_selection_better(...)
+							end,
+							["<C-l>"] = function(...)
+								actions.toggle_selection(...)
+								actions.move_selection_worse(...)
+							end,
+							["<a-t>"] = actions.select_tab,
+							["<a-m>"] = actions.select_tab,
+							["<a-l>"] = actions.select_vertical,
+							["<a-k>"] = actions.select_horizontal,
+							["<a-d>"] = action_layout.toggle_preview,
+							["<c-p>"] = action_layout.cycle_layout_next,
+						},
+					},
+				},
 				-- pickers = {}
 				extensions = {
 					["ui-select"] = {

@@ -111,6 +111,7 @@ function! s:MdCodeBlockTextObj(type) abort
 endfunction
 nnoremap Q :qa<CR>
 nnoremap S :w<CR>
+nnoremap sa :wa<CR>
 " Open the vimrc file anytime
 
 " Undo operations
@@ -190,6 +191,8 @@ nnoremap <S-Tab> <<_
 inoremap <S-Tab> <C-D>
 " inoremap <S-Tab> <CD>
 vnoremap <Tab> >gv
+vnoremap < <gv
+vnoremap > >gv
 vnoremap <S-Tab> <gv
 vnoremap <leader><c-c> "+y
 vnoremap <leader><c-x> "+d
@@ -349,8 +352,8 @@ nnoremap <LEADER>d<c-w> :bd!<CR>
 " colemak keyboard
 " noremap <LEADER>w <C-w>w
 " if version >= 801
-" 	tnoremap <c-n> <C-w>N
-" endif	
+"   tnoremap <c-n> <C-w>N
+" endif  
 
 " noremap <LEADER>u <C-w>k
 " noremap <LEADER>e <C-w>j

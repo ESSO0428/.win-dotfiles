@@ -28,3 +28,7 @@ map("<c-j>", "<cmd>BufferLineCyclePrev<cr>", "Bufferline Prev Buffer")
 map("<c-l>", "<cmd>BufferLineCycleNext<cr>", "Bufferline Next Buffer")
 map("<a-j>", "<cmd>BufferLineMovePrev<cr>", "Bufferline Move Buffer to Prev")
 map("<a-l>", "<cmd>BufferLineMoveNext<cr>", "Bufferline Move Buffer to Next")
+
+-- Session Manager
+map("<leader>S", ":SessionManager save_current_session<cr>", "save_current_session")
+map("<leader>se", "<cmd>SessionManager load_session<cr>", "load_session")
