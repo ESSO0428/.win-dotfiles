@@ -47,12 +47,12 @@ require("headlines").setup({
         (fenced_code_block) @codeblock
       ]]
 		),
-		-- headline_his = {
+		-- headline_highlights = {
 		--   "Headline1",
 		--   "Headline2"
 		-- },
-		headline_his = false,
-		bullet_his = {
+		headline_highlights = false,
+		bullet_highlights = {
 			"@text.title.1.marker.markdown",
 			"@text.title.2.marker.markdown",
 			"@text.title.3.marker.markdown",
@@ -67,7 +67,7 @@ require("headlines").setup({
 		fat_headline_lower_string = "▀",
 	},
 	org = {
-		headline_his = {
+		headline_highlights = {
 			"Headline1",
 			"Headline2",
 		},
