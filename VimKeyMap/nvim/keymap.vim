@@ -233,8 +233,10 @@ function! PasteWithoutTrailingNewline(mode) abort
 
   if a:mode ==# 'i'
     let l:clean = @+
-    let @+ = l:original
-    return l:clean
+    call setreg('+', l:clean)
+    call feedkeys("\<c-\>\<c-o>\"+gP", 'i')
+    call setreg('+', l:clean)
+    return ""
   else
     normal! p
   endif
