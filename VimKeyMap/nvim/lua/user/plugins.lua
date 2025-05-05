@@ -226,13 +226,73 @@ require("lazy").setup({
 
 			local actions = require("telescope.actions")
 			local action_layout = require("telescope.actions.layout")
+			local custom_layout_config = {
+				scroll_speed = 1,
+				width = 0.95,
+				height = 0.65,
+				prompt_position = "top",
+				-- preview_width   = 0.50
+				horizontal = {
+					scroll_speed = 1,
+					width = 0.95,
+					height = 0.65,
+					mirror = false,
+				},
+				vertical = {
+					scroll_speed = 1,
+					width = 0.95,
+					height = 0.95,
+					preview_height = 0.50,
+					mirror = true,
+				},
+			}
 			require("telescope").setup({
 				-- You can put your default mappings / updates / etc. in here
 				--  All the info you're looking for is in `:help telescope.setup()`
 				--
 				defaults = {
+					layout_strategy = "horizontal",
+					sorting_strategy = "ascending",
+					layout_config = custom_layout_config,
 					mappings = {
 						-- i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+						n = {
+							["q"] = {
+								actions.close,
+								type = "action",
+								opts = { nowait = true, silent = true },
+							},
+							["k"] = actions.move_selection_next,
+							["i"] = actions.move_selection_previous,
+							["<ScrollWheelUp>"] = actions.move_selection_previous,
+							["<ScrollWheelDown>"] = actions.move_selection_next,
+							["<LeftMouse>"] = function()
+								vim.defer_fn(function()
+									vim.api.nvim_input("<cr>")
+								end, 100)
+							end,
+							["<C-q>"] = function(...)
+								actions.smart_send_to_qflist(...)
+								actions.open_qflist(...)
+							end,
+							["<c-k>"] = function(...) end,
+							["<C-j>"] = function(...)
+								actions.toggle_selection(...)
+								actions.move_selection_better(...)
+							end,
+							["<C-l>"] = function(...)
+								actions.toggle_selection(...)
+								actions.move_selection_worse(...)
+							end,
+							["<a-t>"] = actions.select_tab,
+							["<a-m>"] = actions.select_tab,
+							["<a-l>"] = actions.select_vertical,
+							["<a-k>"] = actions.select_horizontal,
+							["<a-d>"] = action_layout.toggle_preview,
+							["<c-p>"] = action_layout.cycle_layout_next,
+							["<c-u>"] = actions.preview_scrolling_up,
+							["<c-o>"] = actions.preview_scrolling_down,
+						},
 						i = {
 							["<c-v>"] = function()
 								local paste = vim.fn["PasteWithoutTrailingNewline"]
@@ -271,10 +331,24 @@ require("lazy").setup({
 							["<a-k>"] = actions.select_horizontal,
 							["<a-d>"] = action_layout.toggle_preview,
 							["<c-p>"] = action_layout.cycle_layout_next,
+							["<c-u>"] = actions.preview_scrolling_up,
+							["<c-o>"] = actions.preview_scrolling_down,
 						},
 					},
 				},
-				-- pickers = {}
+				pickers = {
+					buffers = {
+						initial_mode = "normal",
+						mappings = {
+							i = {
+								["<C-d>"] = actions.delete_buffer,
+							},
+							n = {
+								["dd"] = actions.delete_buffer,
+							},
+						},
+					},
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -301,10 +375,7 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<c-f>", function()
 				-- You can pass additional configuration to Telescope to change the theme, layout, etc.
-				builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-					winblend = 10,
-					previewer = false,
-				}))
+				builtin.current_buffer_fuzzy_find()
 			end, { desc = "[/] Fuzzily search in current buffer" })
 
 			-- It's also possible to pass additional configuration options.

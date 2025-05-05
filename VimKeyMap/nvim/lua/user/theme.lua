@@ -116,6 +116,8 @@ vim.cmd("hi DiagnosticUnderlineError guifg=#c0caf5")
 
 vim.cmd("hi IndentBlanklineContextChar guifg=#A184FE gui=nocombine") -- #737aa2
 
+vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
+
 -- Utils
 vim.cmd("hi Todo cterm=bold gui=bold guifg=#71839b guibg=none")
 vim.cmd("au BufEnter *.md setlocal syntax=markdown")
