@@ -30,6 +30,13 @@ vim.cmd("hi link markdownH4Delimiter Statement")
 vim.cmd("hi link markdownH5Delimiter PreProc")
 vim.cmd("hi link markdownH6Delimiter Type")
 
+vim.cmd("hi! link @markup.heading.1.markdown Title")
+vim.cmd("hi! link @markup.heading.2.markdown Title")
+vim.cmd("hi! link @markup.heading.3.markdown Identifier")
+vim.cmd("hi! link @markup.heading.4.markdown Statement")
+vim.cmd("hi! link @markup.heading.5.markdown PreProc")
+vim.cmd("hi! link @markup.heading.6.markdown Type")
+
 require("headlines").setup({
 	markdown = {
 		query = vim.treesitter.query.parse(
