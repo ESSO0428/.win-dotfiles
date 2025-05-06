@@ -43,7 +43,7 @@ Create link to desktop
 # NOTE: This script creates a Neovim Qt shortcut on the desktop.
 #       If the shortcut already exists, it will be deleted and recreated (overwrite behavior).
 $desktop = [Environment]::GetFolderPath("Desktop")
-$shortcutPath = Join-Path $desktop "nvim-qt.lnk"
+$shortcutPath = Join-Path $desktop "nvim-qt.exe.lnk"
 
 if (Test-Path $shortcutPath) {
     Remove-Item $shortcutPath -Force
