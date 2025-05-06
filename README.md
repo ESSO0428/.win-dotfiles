@@ -38,6 +38,26 @@ This is the neovim editor with GUI (For Windows).
 
 Copy paste files of [./VimKeyMap/nvim/](./VimKeyMap/nvim/) to **C:\Users\Andy6\AppData\Local\nvim**
 
+Create link to desktop
+```powershell
+# NOTE: This script creates a Neovim Qt shortcut on the desktop.
+#       If the shortcut already exists, it will be deleted and recreated (overwrite behavior).
+$desktop = [Environment]::GetFolderPath("Desktop")
+$shortcutPath = Join-Path $desktop "nvim-qt.lnk"
+
+if (Test-Path $shortcutPath) {
+    Remove-Item $shortcutPath -Force
+}
+
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($shortcutPath)
+$Shortcut.TargetPath = "C:\Program Files\neovim-qt 0.2.18\bin\nvim-qt.exe"
+$Shortcut.WorkingDirectory = "$env:USERPROFILE"
+$Shortcut.IconLocation = "C:\Program Files\neovim-qt 0.2.18\bin\nvim-qt.exe"
+$Shortcut.Description = "Launch Neovim Qt in Home Folder"
+$Shortcut.Save()
+```
+
 ### Other
 
 `im-select.exe` is a tool to switch between input methods on Windows.
