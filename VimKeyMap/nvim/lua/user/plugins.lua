@@ -912,6 +912,44 @@ require("lazy").setup({
       local luasnip = require "luasnip"
       luasnip.config.setup {}
 
+      local original_cmp_path_dirname = require("cmp_path")._dirname
+
+      require("cmp_path").get_trigger_characters = function()
+        return { "/", ".", "'", '"', ":" }
+      end
+      require("cmp_path")._dirname = function(self, params, option)
+        local original_return = original_cmp_path_dirname(self, params, option)
+        if original_return ~= nil then
+          return original_return
+        end
+        local NAME_REGEX = "\\%([^/\\\\:\\*?<>'\"`\\|]\\)"
+        local PATH_REGEX = vim.regex(([[\%([/"\']PAT\+\)*[/"\']\zePAT*$]]):gsub("PAT", NAME_REGEX))
+        local cursor_line = params.context.cursor_before_line
+
+        local s = PATH_REGEX:match_str(cursor_line)
+
+        if s then
+          local buf_dirname = option.get_cwd(params)
+          local dirname = string.gsub(string.sub(cursor_line, s + 2), "%a*$", "") -- exclude '/'
+          local prefix = string.sub(cursor_line, 1, s + 1) -- include '/'
+          if prefix:match '"$' or prefix:match "'$" then
+            return vim.fn.resolve(buf_dirname .. "/" .. dirname)
+          end
+        end
+
+        local orgmode_s = cursor_line:find "%[%[file:"
+        if orgmode_s then
+          local buf_dirname = option.get_cwd(params)
+          local dirname = string.gsub(string.sub(cursor_line, orgmode_s + 7), "%a*$", "") -- exclude '/'
+          local prefix = string.sub(cursor_line, 7, orgmode_s + 7) -- include '/'
+          if prefix:match ":/$" then
+            return vim.fn.resolve("/" .. dirname)
+          end
+        end
+
+        return nil
+      end
+
       local has_words_before = function()
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
