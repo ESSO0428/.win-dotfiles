@@ -14,110 +14,110 @@ vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.foldingRange = {
-	dynamicRegistration = false,
-	lineFoldingOnly = true,
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
 }
 local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
 for _, ls in ipairs(language_servers) do
-	require("lspconfig")[ls].setup({
-		capabilities = capabilities,
-		-- you can add other fields for setting up lsp server in this table
-	})
+  require("lspconfig")[ls].setup {
+    capabilities = capabilities,
+    -- you can add other fields for setting up lsp server in this table
+  }
 end
 local ftMap = {
-	vim = "indent",
-	python = { "indent" },
-	git = "",
+  vim = "indent",
+  python = { "indent" },
+  git = "",
 }
 local handler = function(virtText, lnum, endLnum, width, truncate)
-	local newVirtText = {}
-	local suffix = (" … 󱦶 %d "):format(endLnum - lnum)
-	local sufWidth = vim.fn.strdisplaywidth(suffix)
-	local targetWidth = width - sufWidth
-	local curWidth = 0
-	for _, chunk in ipairs(virtText) do
-		local chunkText = chunk[1]
-		local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-		if targetWidth > curWidth + chunkWidth then
-			table.insert(newVirtText, chunk)
-		else
-			chunkText = truncate(chunkText, targetWidth - curWidth)
-			local hlGroup = chunk[2]
-			table.insert(newVirtText, { chunkText, hlGroup })
-			chunkWidth = vim.fn.strdisplaywidth(chunkText)
-			-- str width returned from truncate() may less than 2nd argument, need padding
-			if curWidth + chunkWidth < targetWidth then
-				suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
-			end
-			break
-		end
-		curWidth = curWidth + chunkWidth
-	end
-	table.insert(newVirtText, { suffix, "MoreMsg" })
-	return newVirtText
+  local newVirtText = {}
+  local suffix = (" … 󱦶 %d "):format(endLnum - lnum)
+  local sufWidth = vim.fn.strdisplaywidth(suffix)
+  local targetWidth = width - sufWidth
+  local curWidth = 0
+  for _, chunk in ipairs(virtText) do
+    local chunkText = chunk[1]
+    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+    if targetWidth > curWidth + chunkWidth then
+      table.insert(newVirtText, chunk)
+    else
+      chunkText = truncate(chunkText, targetWidth - curWidth)
+      local hlGroup = chunk[2]
+      table.insert(newVirtText, { chunkText, hlGroup })
+      chunkWidth = vim.fn.strdisplaywidth(chunkText)
+      -- str width returned from truncate() may less than 2nd argument, need padding
+      if curWidth + chunkWidth < targetWidth then
+        suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+      end
+      break
+    end
+    curWidth = curWidth + chunkWidth
+  end
+  table.insert(newVirtText, { suffix, "MoreMsg" })
+  return newVirtText
 end
-require("ufo").setup({
-	fold_virt_text_handler = handler,
-	provider_selector = function(bufnr, filetype, buftype)
-		local empty_return_filetypes = {
-			"org",
-			"markdown",
-			"copilot-chat",
-			"Avante",
-		}
-		if vim.tbl_contains(empty_return_filetypes, filetype) then
-			return ""
-		end
-		-- if you prefer treesitter provider rather than lsp,
-		-- return ftMap[filetype] or {'treesitter', 'indent'}
-		return ftMap[filetype]
-	end,
-	preview = {
-		mappings = {
-			scrollU = "<C-u>",
-			scrollD = "<C-o>",
-			jumpTop = "gg",
-			jumpBot = "G",
-			switch = "u",
-		},
-	},
-})
+require("ufo").setup {
+  fold_virt_text_handler = handler,
+  provider_selector = function(bufnr, filetype, buftype)
+    local empty_return_filetypes = {
+      "org",
+      "markdown",
+      "copilot-chat",
+      "Avante",
+    }
+    if vim.tbl_contains(empty_return_filetypes, filetype) then
+      return ""
+    end
+    -- if you prefer treesitter provider rather than lsp,
+    -- return ftMap[filetype] or {'treesitter', 'indent'}
+    return ftMap[filetype]
+  end,
+  preview = {
+    mappings = {
+      scrollU = "<C-u>",
+      scrollD = "<C-o>",
+      jumpTop = "gg",
+      jumpBot = "G",
+      switch = "u",
+    },
+  },
+}
 
 vim.api.nvim_create_autocmd("BufEnter", {
-	pattern = "*",
-	callback = function()
-		if vim.api.nvim_buf_get_name(0):match("UfoPreviewFloatWin") then
-			vim.opt_local.list = false
-			vim.cmd("UfoAttach")
-			vim.cmd("UfoEnableFold")
-			vim.cmd("normal! zX")
-		else
-			if vim.wo.foldenable then
-				vim.cmd("UfoEnableFold")
-			end
-		end
-	end,
+  pattern = "*",
+  callback = function()
+    if vim.api.nvim_buf_get_name(0):match "UfoPreviewFloatWin" then
+      vim.opt_local.list = false
+      vim.cmd "UfoAttach"
+      vim.cmd "UfoEnableFold"
+      vim.cmd "normal! zX"
+    else
+      if vim.wo.foldenable then
+        vim.cmd "UfoEnableFold"
+      end
+    end
+  end,
 })
 
 function PeekFoldedLinesUnderCursor()
-	require("ufo").peekFoldedLinesUnderCursor()
-	local winid = require("ufo.preview.floatwin").winid
+  require("ufo").peekFoldedLinesUnderCursor()
+  local winid = require("ufo.preview.floatwin").winid
 
-	if winid ~= nil then
-		vim.api.nvim_set_option_value("list", vim.opt.list:get(), { win = winid })
-	end
+  if winid ~= nil then
+    vim.api.nvim_set_option_value("list", vim.opt.list:get(), { win = winid })
+  end
 end
 
 vim.keymap.set("n", "<leader>uu", "<cmd>lua PeekFoldedLinesUnderCursor()<cr>")
 
 function Vscode_like_foldLevel_enhance(n)
-	require("fold-cycle").close_all()
-	n = n - 1
-	if n >= 1 then
-		for _ = 1, n do
-			require("fold-cycle").open()
-		end
-	end
+  require("fold-cycle").close_all()
+  n = n - 1
+  if n >= 1 then
+    for _ = 1, n do
+      require("fold-cycle").open()
+    end
+  end
 end
 
 vim.keymap.set("n", "]1", "<cmd>lua Vscode_like_foldLevel_enhance(1)<cr>")

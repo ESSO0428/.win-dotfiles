@@ -29,15 +29,15 @@ my_ext_syntax_map = {
 }
 function toggle_syntax()
   local current_filetype = vim.bo.filetype
-  local ext = vim.fn.expand("%:e")
+  local ext = vim.fn.expand "%:e"
   if current_filetype == "" and ext == "" then
-    print("Failed : filetype is empty")
+    print "Failed : filetype is empty"
     return
   elseif current_filetype == "" or current_filetype == "text" then
     local new_filetype = my_ext_syntax_map[ext]
     current_filetype = new_filetype
     if not new_filetype then
-      print("Failed: unknown file type")
+      print "Failed: unknown file type"
       return
     end
 
@@ -51,21 +51,21 @@ function toggle_syntax()
 
   if current_syntax == "" or current_syntax == "off" then
     vim.b.current_buffer_syntax = "on"
-    vim.cmd("setlocal syntax=on")
+    vim.cmd "setlocal syntax=on"
     if is_match_filetype ~= -1 then
-      vim.cmd("TSBufDisable highlight")
+      vim.cmd "TSBufDisable highlight"
       vim.cmd("set syntax=" .. current_filetype)
-      vim.cmd("set laststatus=2")
+      vim.cmd "set laststatus=2"
     end
-    print("syntax on")
+    print "syntax on"
   else
     vim.b.current_buffer_syntax = "off"
-    vim.cmd("setlocal syntax=off")
-    vim.cmd("set laststatus=3")
+    vim.cmd "setlocal syntax=off"
+    vim.cmd "set laststatus=3"
     if is_match_filetype ~= -1 then
-      vim.cmd("TSBufEnable highlight")
+      vim.cmd "TSBufEnable highlight"
     end
-    print("syntax off")
+    print "syntax off"
   end
 end
 
@@ -109,7 +109,7 @@ function ReStartNotTableFileTypeLayout(action)
   local is_match_filetype = vim.fn.index(datatable_filetypes, vim.bo.filetype) ~= -1 and 1 or -1
   if is_match_filetype == int_bool then
     -- vim.cmd("lua require('lualine').setup()")
-    vim.cmd("set laststatus=3")
+    vim.cmd "set laststatus=3"
   end
 end
 
@@ -117,18 +117,18 @@ function SetupMarkdownBufferSyntaxConceal()
   -- 檢查文件類型是否為 markdown
   if vim.bo.filetype == "markdown" then
     -- 設置語法高亮
-    vim.cmd("setlocal syntax=on")
+    vim.cmd "setlocal syntax=on"
 
     -- 檢查緩衝區類型是否為 nofile
     if vim.bo.buftype == "nofile" then
       -- 設置 concealcursor
-      vim.cmd("setlocal concealcursor=nv")
+      vim.cmd "setlocal concealcursor=nv"
     end
   end
 end
 vim.keymap.set("n", "sn", "<cmd>lua toggle_syntax()<cr>", { desc = "Toggle Syntax" })
 vim.keymap.set("n", "sc", "<cmd>lua toggle_conceal()<cr>", { desc = "Toggle Conceal" })
-vim.cmd([[
+vim.cmd [[
   " autocmd FileType csv,tsv syntax off
   augroup disable_syntax
     autocmd!
@@ -144,7 +144,7 @@ vim.cmd([[
   " autocmd BufLeave,WinLeave * lua ReStartNotTableFileTypeLayout()
   autocmd WinEnter * lua ReStartNotTableFileTypeLayout('enter')
   autocmd BufLeave * lua ReStartNotTableFileTypeLayout('leave')
-]])
+]]
 
 local function format_json(opts)
   local line1 = opts.line1 or 1

@@ -1,12 +1,12 @@
-require("opt")
-require("user.plugins")
-require("user.config.plugins")
-require("user.keymappings.MyKey")
-require("user.keymappings.hydra")
-require("user.keymappings.lsp")
-require("user.tabpage")
-require("user.bigfile")
-require("user.treesitter")
-require("user.session")
-require("user.theme")
-require("user.lsp")
+require "opt"
+require "user.plugins"
+require "user.config.plugins"
+require "user.keymappings.MyKey"
+require "user.keymappings.hydra"
+require "user.keymappings.lsp"
+require "user.tabpage"
+require "user.bigfile"
+require "user.treesitter"
+require "user.session"
+require "user.theme"
+require "user.lsp"
