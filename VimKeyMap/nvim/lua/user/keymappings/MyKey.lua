@@ -32,3 +32,6 @@ map("<a-l>", "<cmd>BufferLineMoveNext<cr>", "Bufferline Move Buffer to Next")
 -- Session Manager
 map("<leader>S", ":SessionManager save_current_session<cr>", "save_current_session")
 map("<leader>se", "<cmd>SessionManager load_session<cr>", "load_session")
+
+-- Toggle Term
+map("<leader><a-1>", "<cmd>exe v:count1 . 'ToggleTerm direction=horizontal'<cr>", "Horizontal Terminal")
