@@ -87,6 +87,8 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 vim.opt.spell = true
+vim.opt.spelllang = "en,cjk"
+vim.opt.spelloptions = "camel,noplainbuffer"
 vim.g.have_nerd_font = true
 vim.opt.listchars:append "space:·"
 
