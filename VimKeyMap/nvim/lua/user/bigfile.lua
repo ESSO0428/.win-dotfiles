@@ -52,7 +52,7 @@ require("bigfile").setup {
             vim.cmd("bd " .. bufnr)
 
             local cmd_exists = function(cmd)
-              return vim.fn.system("where.exe " .. cmd) ~= ""
+              return vim.fn.executable(cmd) == 1
             end
 
             local file_cmd
