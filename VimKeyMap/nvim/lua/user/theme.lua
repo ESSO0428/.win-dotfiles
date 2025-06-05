@@ -1,3 +1,6 @@
+-- setup lunar colorscheme
+require("user.core.lunar").setup()
+
 -- transparent window
 vim.cmd "hi Normal ctermbg=none guibg=none"
 vim.cmd "hi SignColumn ctermbg=none guibg=none"
