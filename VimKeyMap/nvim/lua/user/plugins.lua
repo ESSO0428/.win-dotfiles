@@ -1522,7 +1522,24 @@ require("lazy").setup({
     "nvim-lualine/lualine.nvim",
     event = "VimEnter",
     config = function()
-      require("lualine").setup()
+      vim.g.vim_pid = vim.fn.getpid()
+      require("lualine").setup {
+        sections = {
+          lualine_c = {},
+          lualine_x = {
+            { 'vim.api.nvim_call_function("getcwd", {0})' },
+            { "encoding" },
+            { "fileformat" },
+            { "filetype", icon_only = false },
+            {
+              "pid",
+              fmt = function()
+                return "pid:" .. vim.g.vim_pid
+              end,
+            },
+          },
+        },
+      }
     end,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
