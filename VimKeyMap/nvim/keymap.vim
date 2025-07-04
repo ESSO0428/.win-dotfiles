@@ -290,6 +290,9 @@ noremap <silent> gk gj
 vnoremap <silent> gi gk
 vnoremap <silent> gk gj
 
+" remap gi (go to last insert position)
+noremap <silent> ss gi
+
 " 覆蓋 i, k 成 gk, gj 
 " noremap <silent> i gk
 " noremap <silent> k gj
