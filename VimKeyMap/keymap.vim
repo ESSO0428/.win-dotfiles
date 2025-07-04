@@ -110,6 +110,9 @@ nnoremap <silent> gk gj
 vnoremap <silent> gi gk
 vnoremap <silent> gk gj
 
+" remap gi (go to last insert position)
+noremap <silent> ss gi
+
 " U/E keys for 5 times u/e (faster navigation)
 " colemak keyborad
 " noremap <silent> U 5k

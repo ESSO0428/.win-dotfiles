@@ -3,6 +3,7 @@
 " You can find a list of commands here: https://jb.gg/h38q75
 " Find more examples here: https://jb.gg/share-ideavimrc
 
+" more action, see `:actionlist` or https://gist.github.com/zchee/9c78f91cc5ad771c1f5d
 
 "" -- Suggested options --
 " Show a few lines of context around the cursor. Note that this makes the
@@ -36,7 +37,8 @@ Plug 'tpope/vim-surround'
 
 nnoremap s; :set relativenumber!<cr>
 let mapleader=" "
-nnoremap Q :qa<CR>
+" nnoremap Q :qa<CR>
+nnoremap Q :action CloseProject<CR>
 " nnoremap S :w<CR>
 
 " Open the vimrc file anytime
@@ -151,6 +153,9 @@ nnoremap <silent> gi gk
 nnoremap <silent> gk gj
 vnoremap <silent> gi gk
 vnoremap <silent> gk gj
+
+" remap gi (go to last insert position)
+noremap <silent> ss gi
 
 " U/E keys for 5 times u/e (faster navigation)
 " colemak keyborad
@@ -271,10 +276,10 @@ nnoremap <c-m> :action EditorSelectWord<CR>
 vnoremap gf :action GotoFile<CR>
 nnoremap gx :action GotoDeclaration<CR>
 
-nnoremap sg :action FindInPath<CR>
-nnoremap sf :action GotoFile<CR>
-nnoremap ss :action Switcher<CR>
-nnoremap so :action RecentFiles<CR>
+nnoremap <leader>sg :action FindInPath<CR>
+nnoremap <leader>sf :action GotoFile<CR>
+nnoremap <leader>ss :action Switcher<CR>
+nnoremap <leader>so :action RecentFiles<CR>
 nnoremap <c-p> :action SearchEverywhere<CR>
 
 command! New action NewFile
