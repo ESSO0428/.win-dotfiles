@@ -1799,6 +1799,10 @@ require("lazy").setup({
     dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
   },
   {
+    "lfv89/vim-interestingwords",
+    event = "VeryLazy",
+  },
+  {
     "Shatur/neovim-session-manager",
     keys = {
       { "<leader>S", ":SessionManager save_current_session<cr>", desc = "SessionManager save_current_session" },
