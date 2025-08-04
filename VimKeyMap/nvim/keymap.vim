@@ -171,6 +171,8 @@ nnoremap U "_ddk
 " noremap <c-y> yyp
 nnoremap <a-i> <c-u>
 nnoremap <a-k> <c-d>
+nnoremap <a--> <c-o>
+nnoremap <a-=> <c-i>
 nnoremap <c-d> yyp
 " nmap < <<CR>
 " nmap > ><CR>
@@ -422,7 +424,7 @@ nnoremap <a-\> :tabclose<CR>
 nnoremap <silent> <c-\> :split \| term<CR>
 tnoremap <c-n> <c-\><c-n>
 " nnoremap <LEADER>b- :b#<CR>
-nnoremap <a--> :b#<CR>
+nnoremap <a-`> :b#<CR>
 
 
 " set wrap
