@@ -124,6 +124,9 @@ nnoremap z u
 noremap h i
 noremap H I
 
+" remap z relationship keymaps
+nnoremap <leader>z z
+
 " Copy to system clipboard
 vnoremap Y "+y
 nnoremap Y y$
