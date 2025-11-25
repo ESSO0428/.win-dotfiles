@@ -27,7 +27,6 @@ require("lazy").setup({
   },
   {
     "folke/flash.nvim",
-    event = "VeryLazy",
     ---@type Flash.Config
     opts = {
       config = nil,
@@ -70,6 +69,7 @@ require("lazy").setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     "lewis6991/gitsigns.nvim",
+    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
     opts = {
       signs = {
         add = { text = "+" },
@@ -390,6 +390,7 @@ require("lazy").setup({
   },
   {
     "akinsho/toggleterm.nvim",
+    cmd = { "ToggleTerm", "TermExec" }, -- 用指令時才載
     version = "*",
     opts = {
       on_config_done = nil,
@@ -445,12 +446,14 @@ require("lazy").setup({
   { "Bilal2453/luvit-meta", lazy = true },
   {
     "HiPhish/rainbow-delimiters.nvim",
+    event = { "BufReadPost", "BufNewFile" },
     deprecated = {
       { "nvim-treesitter/nvim-treesitter" },
     },
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       vim.keymap.set("n", "[a", function()
         require("treesitter-context").go_to_context()
@@ -486,6 +489,7 @@ require("lazy").setup({
   {
     -- Main LSP Configuration
     "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       { "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
@@ -727,6 +731,7 @@ require("lazy").setup({
   },
   {
     "aznhe21/actions-preview.nvim",
+    event = "VeryLazy",
     config = function()
       require("actions-preview").setup {
         diff = {
@@ -754,6 +759,7 @@ require("lazy").setup({
   },
   {
     "kosayoda/nvim-lightbulb",
+    event = "LspAttach", -- 或 { "CursorHold", "CursorHoldI" }
     opts = require("user.config.plugins.nvim_lightbulb").opt,
   },
   {
@@ -849,6 +855,7 @@ require("lazy").setup({
   },
   {
     "rmagatti/goto-preview",
+    event = "VeryLazy",
     config = function()
       require("goto-preview").setup {
         post_open_hook = function(_, win)
@@ -1384,6 +1391,7 @@ require("lazy").setup({
   },
   {
     "stevearc/oil.nvim",
+    cmd = "Oil", -- ★ command lazy
     opts = {
       default_file_explorer = false,
       keymaps = {
@@ -1520,7 +1528,8 @@ require("lazy").setup({
   },
   {
     "nvim-lualine/lualine.nvim",
-    event = "VimEnter",
+    -- event = "VimEnter",
+    event = "VeryLazy", -- 或 "UIEnter"
     config = function()
       vim.g.vim_pid = vim.fn.getpid()
       require("lualine").setup {
@@ -1545,6 +1554,7 @@ require("lazy").setup({
   },
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
+    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
     build = ":TSUpdate",
     main = "nvim-treesitter.configs", -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1583,6 +1593,7 @@ require("lazy").setup({
   { "MunifTanjim/nui.nvim" },
   {
     "SmiteshP/nvim-navic",
+    event = "LspAttach",
     config = function()
       require("user.config.breadcrumbs").setup()
     end,
@@ -1590,6 +1601,7 @@ require("lazy").setup({
   },
   {
     "SmiteshP/nvim-navbuddy",
+    cmd = "Navbuddy",
     deprecated = {
       "neovim/nvim-lspconfig",
       "SmiteshP/nvim-navic",
@@ -1628,6 +1640,23 @@ require("lazy").setup({
   },
   {
     "akinsho/bufferline.nvim",
+    event = "VeryLazy", -- ★ 新增
+    dependencies = {
+      "ESSO0428/tabline.nvim",
+      dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
+      config = function()
+        require("tabline").setup {
+          enable = false,
+          options = {
+            show_tabs_always = true,
+          },
+        }
+        vim.cmd [[
+        set guioptions-=e " Use showtabline in gui vim
+        set sessionoptions+=tabpages,globals " store tabpages and globals in session
+      ]]
+      end,
+    },
     config = function()
       local function is_ft(b, ft)
         return vim.bo[b].filetype == ft
@@ -1662,6 +1691,11 @@ require("lazy").setup({
         end
         result = table.concat(result, " ")
         return #result > 0 and result or ""
+      end
+
+      local ok_bufferline, bufferline = pcall(require, "bufferline")
+      if not ok_bufferline then
+        return
       end
 
       local status_ok, bufferline = pcall(require, "bufferline")
@@ -1778,25 +1812,14 @@ require("lazy").setup({
       if bufferline.on_config_done then
         bufferline.on_config_done()
       end
-      require("tabline").on_session_load_post()
-      vim.o.tabline = "%!v:lua.nvim_bufferline() .. v:lua.require'tabline'.tabline_tabs()"
+      local ok_tabline, tabline = pcall(require, "tabline")
+      if ok_tabline then
+        tabline.on_session_load_post()
+        vim.o.tabline = "%!v:lua.nvim_bufferline() .. v:lua.require'tabline'.tabline_tabs()"
+      else
+        vim.o.tabline = "%!v:lua.nvim_bufferline()"
+      end
     end,
-  },
-  {
-    "ESSO0428/tabline.nvim",
-    config = function()
-      require("tabline").setup {
-        enable = false,
-        options = {
-          show_tabs_always = true,
-        },
-      }
-      vim.cmd [[
-        set guioptions-=e " Use showtabline in gui vim
-        set sessionoptions+=tabpages,globals " store tabpages and globals in session
-      ]]
-    end,
-    dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
   },
   {
     "lfv89/vim-interestingwords",
@@ -1808,9 +1831,28 @@ require("lazy").setup({
       { "<leader>S", ":SessionManager save_current_session<cr>", desc = "SessionManager save_current_session" },
     },
   },
-  { "ESSO0428/bioSyntax-vim" },
+  {
+    "ESSO0428/bioSyntax-vim",
+    ft = {
+      "fasta",
+      "fastq",
+      "sam",
+      "bam",
+      "vcf",
+      "bed",
+      "gtf",
+      "pdb",
+      "nexus",
+      "clustal",
+      "cwl",
+      "pml",
+      "flagstat",
+      "faidx",
+    },
+  },
   {
     "petertriho/nvim-scrollbar",
+    event = "BufWinEnter", -- 比 VeryLazy 再精準一點
     config = function()
       require("scrollbar").setup {
         show = true,
@@ -1826,13 +1868,18 @@ require("lazy").setup({
       }
     end,
   },
-  { "kevinhwang91/promise-async" },
+  {
+    "kevinhwang91/promise-async",
+    lazy = true,
+  },
   {
     "kevinhwang91/nvim-ufo",
+    event = "BufReadPost", -- 打開檔案後再載
     deprecated = { "kevinhwang91/promise-async" },
   },
   {
     "luukvbaal/statuscol.nvim",
+    event = "BufReadPost", -- 有檔案 + signcolumn 時才有意義
     opts = function()
       local builtin = require "statuscol.builtin"
       return {
@@ -1853,6 +1900,7 @@ require("lazy").setup({
   },
   {
     "jghauser/fold-cycle.nvim",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("fold-cycle").setup()
       vim.keymap.set("n", "[f", function()
@@ -1871,6 +1919,7 @@ require("lazy").setup({
   },
   {
     "lukas-reineke/headlines.nvim",
+    ft = { "markdown", "norg", "org" }, -- ★ 比 VeryLazy 更精準
     dependencies = "nvim-treesitter/nvim-treesitter",
     config = true, -- or `opts = {}`
   },
@@ -1883,6 +1932,7 @@ require("lazy").setup({
   {
     "MeanderingProgrammer/markdown.nvim",
     commit = "0022a57",
+    ft = "markdown",
     main = "render-markdown",
     opts = {},
     name = "render-markdown", -- Only needed if you have another plugin named markdown.nvim
@@ -2038,7 +2088,10 @@ require("lazy").setup({
   { "ESSO0428/vim-fugitive" },
   { "rbong/vim-flog" },
   { "sindrets/diffview.nvim" },
-  { "nvimtools/hydra.nvim" },
+  {
+    "nvimtools/hydra.nvim",
+    event = "VeryLazy", -- 只有你真的用 hydra 的時候才會拖一點
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
