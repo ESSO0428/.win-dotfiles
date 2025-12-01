@@ -1827,6 +1827,21 @@ require("lazy").setup({
   },
   {
     "Shatur/neovim-session-manager",
+    config = function()
+      vim.api.nvim_clear_autocmds {
+        group = "SessionManager",
+        event = "VimEnter",
+      }
+      local group = vim.api.nvim_create_augroup("SessionManager", { clear = false })
+      vim.api.nvim_create_autocmd("User", {
+        group = group,
+        pattern = "VeryLazy",
+        nested = true,
+        callback = function()
+          require("session_manager").autoload_session()
+        end,
+      })
+    end,
     keys = {
       { "<leader>S", ":SessionManager save_current_session<cr>", desc = "SessionManager save_current_session" },
     },
