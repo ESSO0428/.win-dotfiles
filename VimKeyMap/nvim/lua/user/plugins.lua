@@ -227,19 +227,19 @@ require("lazy").setup({
       local actions = require "telescope.actions"
       local action_layout = require "telescope.actions.layout"
       local custom_layout_config = {
-        scroll_speed = 1,
+        -- scroll_speed = 1,
         width = 0.95,
         height = 0.65,
         prompt_position = "top",
         -- preview_width   = 0.50
         horizontal = {
-          scroll_speed = 1,
+          -- scroll_speed = 1,
           width = 0.95,
           height = 0.65,
           mirror = false,
         },
         vertical = {
-          scroll_speed = 1,
+          -- scroll_speed = 1,
           width = 0.95,
           height = 0.95,
           preview_height = 0.50,
@@ -264,6 +264,14 @@ require("lazy").setup({
               },
               ["k"] = actions.move_selection_next,
               ["i"] = actions.move_selection_previous,
+              -- ["<Left>"] = actions.preview_scrolling_left,
+              -- ["<Right>"] = actions.preview_scrolling_right,
+              -- ["<C-Left>"] = actions.preview_scrolling_left,
+              -- ["<C-Right>"] = actions.preview_scrolling_right,
+              ["<C-Up>"] = actions.preview_scrolling_up,
+              ["<C-Down>"] = actions.preview_scrolling_down,
+              ["<c-f>"] = actions.preview_scrolling_up,
+              ["<c-d>"] = actions.preview_scrolling_down,
               ["<ScrollWheelUp>"] = actions.move_selection_previous,
               ["<ScrollWheelDown>"] = actions.move_selection_next,
               ["<LeftMouse>"] = function()
@@ -275,7 +283,6 @@ require("lazy").setup({
                 actions.smart_send_to_qflist(...)
                 actions.open_qflist(...)
               end,
-              ["<c-k>"] = function(...) end,
               ["<C-j>"] = function(...)
                 actions.toggle_selection(...)
                 actions.move_selection_better(...)
@@ -284,6 +291,9 @@ require("lazy").setup({
                 actions.toggle_selection(...)
                 actions.move_selection_worse(...)
               end,
+              ["<c-k>"] = actions.toggle_all,
+              ["<a-=>"] = actions.select_all,
+              ["<a-->"] = actions.drop_all,
               ["<a-t>"] = actions.select_tab,
               ["<a-m>"] = actions.select_tab,
               ["<a-l>"] = actions.select_vertical,
@@ -305,6 +315,12 @@ require("lazy").setup({
               --     vim.api.nvim_input('<cr>')
               --   end, 100)
               -- end,
+              -- ["<C-Left>"] = actions.preview_scrolling_left,
+              -- ["<C-Right>"] = actions.preview_scrolling_right,
+              ["<C-Up>"] = actions.preview_scrolling_up,
+              ["<C-Down>"] = actions.preview_scrolling_down,
+              ["<c-f>"] = actions.preview_scrolling_up,
+              ["<c-d>"] = actions.preview_scrolling_down,
               ["<ScrollWheelUp>"] = actions.move_selection_previous,
               ["<ScrollWheelDown>"] = actions.move_selection_next,
               ["<LeftMouse>"] = function()
@@ -316,7 +332,6 @@ require("lazy").setup({
                 actions.smart_send_to_qflist(...)
                 actions.open_qflist(...)
               end,
-              ["<c-k>"] = function(...) end,
               ["<C-j>"] = function(...)
                 actions.toggle_selection(...)
                 actions.move_selection_better(...)
@@ -325,6 +340,9 @@ require("lazy").setup({
                 actions.toggle_selection(...)
                 actions.move_selection_worse(...)
               end,
+              ["<c-k>"] = actions.toggle_all,
+              ["<a-=>"] = actions.select_all,
+              ["<a-->"] = actions.drop_all,
               ["<a-t>"] = actions.select_tab,
               ["<a-m>"] = actions.select_tab,
               ["<a-l>"] = actions.select_vertical,
@@ -386,6 +404,68 @@ require("lazy").setup({
           prompt_title = "Live Grep in Open Files",
         }
       end, { desc = "[S]earch [/] in Open Files" })
+    end,
+  },
+  {
+    "debugloop/telescope-undo.nvim",
+    dependencies = { -- note how they're inverted to above example
+      {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+      },
+    },
+    keys = {
+      { -- lazy style key map
+        "<leader>sz",
+        "<cmd>Telescope undo<cr>",
+        desc = "undo history",
+      },
+    },
+    opts = {
+      -- don't use `defaults = { }` here, do this in the main telescope spec
+      extensions = {
+        undo = {
+          -- telescope-undo.nvim config, see below
+        },
+        -- no other extensions here, they can have their own spec too
+      },
+    },
+    config = function(_, opts)
+      -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
+      -- configs for us. We won't use data, as everything is in it's own namespace (telescope
+      -- defaults, as well as each extension).
+      require("telescope").setup(opts)
+
+      local origin_get_previewer = require("telescope-undo.previewer").get_previewer
+      local previewers = require "telescope.previewers"
+      local is_wsl = (function()
+        local output = vim.fn.systemlist "uname -r"
+        return not not string.find(output[1] or "", "WSL")
+      end)()
+      local has_powershell = vim.fn.executable "powershell" == 1
+      local has_bash = vim.fn.executable "bash" == 1
+      require("telescope-undo.previewer").get_previewer = function(o)
+        o = o or {}
+        if
+          o.use_custom_command == nil
+          and not (o.use_delta and not is_wsl and (has_powershell or has_bash) and vim.fn.executable "delta" == 1)
+        then
+          return previewers.new_buffer_previewer {
+            -- this is not the prettiest preview...
+            define_preview = function(self, entry, _)
+              vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, true, vim.split(entry.value.diff, "\n"))
+              require("telescope.previewers.utils").highlighter(
+                self.state.bufnr,
+                "diff",
+                { preview = { treesitter = { enable = true } } }
+              )
+            end,
+          }
+        else
+          return origin_get_previewer(o)
+        end
+      end
+      require("telescope").load_extension "undo"
     end,
   },
   {
