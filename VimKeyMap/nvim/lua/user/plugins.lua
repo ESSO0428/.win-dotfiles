@@ -2147,6 +2147,15 @@ require("lazy").setup({
       }
     end,
   },
+  { "dhruvasagar/vim-table-mode" },
+  {
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && npm install",
+    ft = "markdown",
+    config = function()
+      vim.g.mkdp_auto_start = 1
+    end,
+  },
   {
     "stevearc/quicker.nvim",
     event = "FileType qf",
