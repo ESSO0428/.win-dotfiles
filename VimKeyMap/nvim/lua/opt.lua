@@ -5,7 +5,9 @@
 vim.hl = vim.highlight
 vim.opt.shell = "pwsh.exe -NoLogo"
 --  HACK: Use '/' in netrw to prevent tree view breaking on Windows after 'x'
-vim.o.shellslash = true
+if vim.fn.exists "+shellslash" == 1 then
+  vim.o.shellslash = true
+end
 vim.opt.shellcmdflag =
   "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
 vim.cmd [[
