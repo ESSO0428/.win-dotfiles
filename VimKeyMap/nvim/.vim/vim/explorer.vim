@@ -1,5 +1,21 @@
 let g:netrw_liststyle = 3
 
+function! NetrwXOpen() abort
+  let l:target = netrw#Call('NetrwGetWord')
+
+  let l:path = netrw#Call('NetrwBrowseChgDir', 1, l:target, 0)
+
+  let l:path = substitute(l:path, '/', '\', 'g')
+
+  if isdirectory(l:path)
+    execute 'silent! !start explorer ' . shellescape(l:path)
+    redraw!
+    return
+  endif
+
+  call netrw#BrowseX(l:path, 0)
+endfunction
+
 function! CleanUselessBuffers()
   for buf in getbufinfo()
     if buf.name ==# "" && buf.changed == 0 && buf.loaded == 1
@@ -131,4 +147,6 @@ function! NetrwMapping()
   " Mouse: single click enters directories; double click opens files/dirs
   nnoremap <silent><buffer> <LeftMouse>    :call <SID>NetrwMouseOpen(1)<CR>
   nnoremap <silent><buffer> <2-LeftMouse>  :call <SID>NetrwMouseOpen(2)<CR>
+
+  nnoremap <silent><buffer> x :call NetrwXOpen()<CR>
 endfunction
