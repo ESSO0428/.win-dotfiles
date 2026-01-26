@@ -1,15 +1,37 @@
 let g:netrw_liststyle = 3
 
+function! s:OpenDir(path) abort
+  let l:p = a:path
+
+  if has('win32') || has('win64')
+    let l:p = substitute(l:p, '/', '\', 'g')
+    execute 'silent! !start explorer ' . shellescape(l:p)
+    redraw!
+    return
+  endif
+
+  if has('mac') || has('macunix')
+    execute 'silent! !open ' . shellescape(l:p)
+    redraw!
+    return
+  endif
+
+  if executable('xdg-open')
+    execute 'silent! !xdg-open ' . shellescape(l:p)
+    redraw!
+    return
+  endif
+
+  call netrw#BrowseX(l:p, 0)
+endfunction
+
 function! NetrwXOpen() abort
   let l:target = netrw#Call('NetrwGetWord')
 
   let l:path = netrw#Call('NetrwBrowseChgDir', 1, l:target, 0)
 
-  let l:path = substitute(l:path, '/', '\', 'g')
-
   if isdirectory(l:path)
-    execute 'silent! !start explorer ' . shellescape(l:path)
-    redraw!
+    call s:OpenDir(l:path)
     return
   endif
 
