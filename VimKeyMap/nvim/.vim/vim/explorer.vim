@@ -1,41 +1,75 @@
 let g:netrw_liststyle = 3
 
-function! s:OpenDir(path) abort
+function! s:SystemOpen(path) abort
   let l:p = a:path
 
   if has('win32') || has('win64')
+    let l:p = substitute(l:p, '[/\\]$', '', '')
     let l:p = substitute(l:p, '/', '\', 'g')
-    execute 'silent! !start explorer ' . shellescape(l:p)
-    redraw!
+    " Use system() to avoid triggering Vim's ShellCmdPost event (prevents Netrw refresh)
+    call system('start explorer ' . shellescape(l:p))
     return
   endif
 
   if has('mac') || has('macunix')
-    execute 'silent! !open ' . shellescape(l:p)
-    redraw!
+    call system('open ' . shellescape(l:p))
     return
   endif
 
   if executable('xdg-open')
-    execute 'silent! !xdg-open ' . shellescape(l:p)
-    redraw!
+    call system('xdg-open ' . shellescape(l:p))
     return
   endif
 
   call netrw#BrowseX(l:p, 0)
 endfunction
 
+function! s:StripSlash(str) abort
+  return substitute(a:str, '[/\\]$', '', '')
+endfunction
+
+function! s:IsSuffix(str, suffix) abort
+  let l:str_len = len(a:str)
+  let l:suf_len = len(a:suffix)
+  return l:suf_len <= l:str_len && a:str[ -l:suf_len : ] ==? a:suffix
+endfunction
+
 function! NetrwXOpen() abort
+  " Intent: Open externally with fix for Tree View nested paths
   let l:target = netrw#Call('NetrwGetWord')
 
+  " 1. Baseline: Reliably resolves files and relative paths (./, ../)
   let l:path = netrw#Call('NetrwBrowseChgDir', 1, l:target, 0)
+  
+  let l:is_tree_dir = (exists('b:netrw_liststyle') && b:netrw_liststyle == 3) && (getline('.') =~# '/$')
 
-  if isdirectory(l:path)
-    call s:OpenDir(l:path)
-    return
+  " 2. Tree View Fix: Recalculate path specifically for nested directories
+  if l:is_tree_dir
+    let l:tree_path = netrw#Call('NetrwTreeDir', 1)
+
+    " 3. Validation: Only accept correction if suffix matches target
+    if s:IsSuffix(s:StripSlash(l:tree_path), s:StripSlash(l:target))
+      let l:path = l:tree_path
+    endif
   endif
 
-  call netrw#BrowseX(l:path, 0)
+" 4. BUG FIX: Rescue empty buffer / restore Netrw state
+  " Trigger refresh if:
+  " A. Path equals current directory (e.g. ./ or empty target)
+  " B. Target is ../ (Parent dir navigation also blanks the buffer)
+  let l:is_current_dir = (exists('b:netrw_curdir') && s:StripSlash(l:path) ==? s:StripSlash(b:netrw_curdir))
+  let l:is_parent_dir  = (l:target ==# '../')
+
+  if l:is_current_dir || l:is_parent_dir
+    execute "normal \<Plug>NetrwLocalBrowseCheck"
+  endif
+
+  if isdirectory(l:path)
+    call s:SystemOpen(l:path)
+  else
+    " call netrw#BrowseX(l:path, 0)
+    call s:SystemOpen(l:path)
+  endif
 endfunction
 
 function! CleanUselessBuffers()
