@@ -53,7 +53,7 @@ function! NetrwXOpen() abort
     endif
   endif
 
-" 4. BUG FIX: Rescue empty buffer / restore Netrw state
+  " 4. FIX: Rescue empty buffer / restore Netrw state
   " Trigger refresh if:
   " A. Path equals current directory (e.g. ./ or empty target)
   " B. Target is ../ (Parent dir navigation also blanks the buffer)
