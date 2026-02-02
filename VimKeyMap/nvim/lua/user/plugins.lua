@@ -526,7 +526,7 @@ require("lazy").setup({
   { "Bilal2453/luvit-meta", lazy = true },
   {
     "HiPhish/rainbow-delimiters.nvim",
-    event = { "BufReadPost", "BufNewFile" },
+    lazy = false,
     deprecated = {
       { "nvim-treesitter/nvim-treesitter" },
     },
