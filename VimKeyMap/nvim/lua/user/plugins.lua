@@ -2008,21 +2008,44 @@ require("lazy").setup({
   },
   {
     "jghauser/fold-cycle.nvim",
-    event = { "BufReadPre", "BufNewFile" },
+    keys = {
+      {
+        "[f",
+        function()
+          return require("fold-cycle").close()
+        end,
+        desc = "Fold-cycle: close folds",
+        silent = true,
+      },
+      {
+        "]f",
+        function()
+          return require("fold-cycle").open()
+        end,
+        desc = "Fold-cycle: open folds",
+        silent = true,
+      },
+      {
+        "[g",
+        function()
+          return require("fold-cycle").close_all()
+        end,
+        desc = "Fold-cycle: close all folds",
+        silent = true,
+        remap = true,
+      },
+      {
+        "]g",
+        function()
+          return require("fold-cycle").open_all()
+        end,
+        desc = "Fold-cycle: open all folds",
+        silent = true,
+        remap = true,
+      },
+    },
     config = function()
       require("fold-cycle").setup()
-      vim.keymap.set("n", "[f", function()
-        return require("fold-cycle").close()
-      end, { silent = true, desc = "Fold-cycle: close folds" })
-      vim.keymap.set("n", "]f", function()
-        return require("fold-cycle").open()
-      end, { silent = true, desc = "Fold-cycle: open folds" })
-      vim.keymap.set("n", "[g", function()
-        return require("fold-cycle").close_all()
-      end, { remap = true, silent = true, desc = "Fold-cycle: close all folds" })
-      vim.keymap.set("n", "]g", function()
-        return require("fold-cycle").open_all()
-      end, { remap = true, silent = true, desc = "Fold-cycle: Open all folds" })
     end,
   },
   {
