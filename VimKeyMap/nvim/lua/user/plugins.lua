@@ -1974,7 +1974,7 @@ require("lazy").setup({
   },
   {
     "kevinhwang91/nvim-ufo",
-    event = "BufReadPost", -- 打開檔案後再載
+    event = "VeryLazy",
     deprecated = { "kevinhwang91/promise-async" },
     config = function()
       require("user.config.plugins.fold").setup()
@@ -1982,7 +1982,7 @@ require("lazy").setup({
   },
   {
     "luukvbaal/statuscol.nvim",
-    event = "BufReadPost", -- 有檔案 + signcolumn 時才有意義
+    event = "VeryLazy",
     opts = function()
       local builtin = require "statuscol.builtin"
       return {
