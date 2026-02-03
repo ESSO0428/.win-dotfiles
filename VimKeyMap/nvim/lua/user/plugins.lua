@@ -1686,7 +1686,7 @@ require("lazy").setup({
   },
   {
     "SmiteshP/nvim-navbuddy",
-    cmd = "Navbuddy",
+    event = "VeryLazy",
     deprecated = {
       "neovim/nvim-lspconfig",
       "SmiteshP/nvim-navic",
@@ -1698,6 +1698,11 @@ require("lazy").setup({
     config = function()
       local actions = require "nvim-navbuddy.actions"
       local navbuddy = require "nvim-navbuddy"
+      require("lspconfig").clangd.setup {
+        on_attach = function(client, bufnr)
+          navbuddy.attach(client, bufnr)
+        end,
+      }
       navbuddy.setup {
         window = {
           border = "double",
