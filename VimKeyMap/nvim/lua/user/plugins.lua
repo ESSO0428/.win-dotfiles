@@ -74,7 +74,8 @@ require("lazy").setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     "lewis6991/gitsigns.nvim",
-    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    -- event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    event = "User FileOpened",
     opts = {
       signs = {
         add = { text = "+" },
@@ -538,7 +539,8 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
-    event = { "BufReadPre", "BufNewFile" },
+    -- event = { "BufReadPre", "BufNewFile" },
+    event = "User FileOpened",
     config = function()
       vim.keymap.set("n", "[a", function()
         require("treesitter-context").go_to_context()
@@ -574,7 +576,8 @@ require("lazy").setup({
   {
     -- Main LSP Configuration
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    -- event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    event = "User FileOpened",
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       { "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
@@ -720,6 +723,10 @@ require("lazy").setup({
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
       -- Enable the following language servers
@@ -816,7 +823,8 @@ require("lazy").setup({
   },
   {
     "aznhe21/actions-preview.nvim",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
+    event = "User FileOpened",
     config = function()
       require("actions-preview").setup {
         diff = {
@@ -940,7 +948,7 @@ require("lazy").setup({
   },
   {
     "rmagatti/goto-preview",
-    event = "VeryLazy",
+    event = "LspAttach",
     config = function()
       require("goto-preview").setup {
         post_open_hook = function(_, win)
@@ -1470,7 +1478,8 @@ require("lazy").setup({
   -- Highlight todo, notes, etc in comments
   {
     "folke/todo-comments.nvim",
-    event = "VimEnter",
+    -- event = "VimEnter",
+    event = "User FileOpened",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
   },
@@ -1639,7 +1648,8 @@ require("lazy").setup({
   },
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
-    event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    -- event = { "BufReadPre", "BufNewFile" }, -- ★ 新增
+    event = "User FileOpened",
     build = ":TSUpdate",
     main = "nvim-treesitter.configs", -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1730,7 +1740,8 @@ require("lazy").setup({
   },
   {
     "akinsho/bufferline.nvim",
-    event = "VeryLazy", -- ★ 新增
+    -- event = "VeryLazy", -- ★ 新增
+    event = "User FileOpened",
     dependencies = {
       "ESSO0428/tabline.nvim",
       dependencies = { "fgheng/winbar.nvim", "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
@@ -1913,7 +1924,8 @@ require("lazy").setup({
   },
   {
     "lfv89/vim-interestingwords",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
+    event = "User FileOpened",
   },
   {
     "Shatur/neovim-session-manager",
@@ -1957,7 +1969,8 @@ require("lazy").setup({
   },
   {
     "petertriho/nvim-scrollbar",
-    event = "BufWinEnter", -- 比 VeryLazy 再精準一點
+    -- event = "BufWinEnter", -- 比 VeryLazy 再精準一點
+    event = "User FileOpened",
     config = function()
       require("scrollbar").setup {
         show = true,
@@ -1979,7 +1992,8 @@ require("lazy").setup({
   },
   {
     "kevinhwang91/nvim-ufo",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
+    event = "User FileOpened",
     deprecated = { "kevinhwang91/promise-async" },
     config = function()
       require("user.config.plugins.fold").setup()
@@ -1987,7 +2001,8 @@ require("lazy").setup({
   },
   {
     "luukvbaal/statuscol.nvim",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
+    event = "User FileOpened",
     opts = function()
       local builtin = require "statuscol.builtin"
       return {
@@ -2123,7 +2138,8 @@ require("lazy").setup({
   { "sindrets/diffview.nvim" },
   {
     "nvimtools/hydra.nvim",
-    event = "VeryLazy", -- 只有你真的用 hydra 的時候才會拖一點
+    -- event = "VeryLazy", -- 只有你真的用 hydra 的時候才會拖一點
+    event = "User FileOpened",
     config = function()
       require("user.keymappings.hydra").setup()
     end,
