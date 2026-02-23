@@ -1,12 +1,8 @@
--- This module contains a number of default definitions
--- NOTE: 與 treesitter regex 不兼融，請避免 TSInstall regex
-local rainbow_delimiters = require "rainbow-delimiters"
-
----@class rainbow_delimiters
+---@type rainbow_delimiters.config
 vim.g.rainbow_delimiters = {
   strategy = {
-    [""] = rainbow_delimiters.strategy["global"],
-    vim = rainbow_delimiters.strategy["local"],
+    [""] = "rainbow-delimiters.strategy.global",
+    vim = "rainbow-delimiters.strategy.local",
   },
   query = {
     [""] = "rainbow-delimiters",
@@ -22,16 +18,24 @@ vim.g.rainbow_delimiters = {
     "RainbowDelimiterCyan",
   },
 }
-pcall(function()
-  require("nvim-dap-repl-highlights").setup()
-end)
-require("nvim-treesitter.install").compilers = { "clang", "gcc" }
+vim.api.nvim_create_autocmd("User", {
+  pattern = "FileOpened",
+  callback = function()
+    require("nvim-treesitter.install").compilers = { "clang", "gcc" }
+  end,
+})
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "mysql",
   callback = function(args)
     vim.treesitter.start(args.buf, "sql")
-    vim.bo[args.buf].syntax = "on" -- only if additional legacy syntax is needed
+    -- vim.bo[args.buf].syntax = 'on' -- only if additional legacy syntax is needed
   end,
 })
-local ft = require "Comment.ft"
-ft.set("mysql", "-- %s")
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "sql", "mysql" },
+  once = true,
+  callback = function()
+    local ft = require "Comment.ft"
+    ft.set("mysql", "-- %s")
+  end,
+})

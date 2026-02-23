@@ -532,7 +532,8 @@ require("lazy").setup({
   { "Bilal2453/luvit-meta", lazy = true },
   {
     "HiPhish/rainbow-delimiters.nvim",
-    lazy = false,
+    -- lazy = false,
+    event = "User FileOpened",
     deprecated = {
       { "nvim-treesitter/nvim-treesitter" },
     },
@@ -1696,7 +1697,6 @@ require("lazy").setup({
   },
   {
     "SmiteshP/nvim-navbuddy",
-    event = "VeryLazy",
     deprecated = {
       "neovim/nvim-lspconfig",
       "SmiteshP/nvim-navic",
