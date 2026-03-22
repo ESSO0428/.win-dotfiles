@@ -10,7 +10,7 @@
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
-require("lazy").setup({
+local plugins = {
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -2155,7 +2155,10 @@ require("lazy").setup({
       require("user.keymappings.hydra").setup()
     end,
   },
-}, {
+}
+
+-- NOTE: Lazy.nvim settings
+local settings = {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
@@ -2178,7 +2181,10 @@ require("lazy").setup({
   performance = {
     rtp = { reset = false },
   },
-})
+}
+
+require("lazy").setup(plugins, settings)
+
 -- NOTE: Here is rebinded keymaps for lazy.nvim
 -- use require cover, because lunarvim not builtin it's keymaps
 require("lazy.view.config").keys = {
