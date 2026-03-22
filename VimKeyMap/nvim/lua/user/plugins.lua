@@ -2011,7 +2011,18 @@ require("lazy").setup({
         -- number-less fold indicator, then signs, then line number & separator
         segments = {
           { text = { "%s" }, click = "v:lua.ScSa" },
-          { text = { builtin.foldfunc, " " }, click = "v:lua.ScFa" },
+          {
+            text = {
+              function(args)
+                if args.fold.width > 0 then
+                  return builtin.foldfunc(args) .. " "
+                else
+                  return ""
+                end
+              end,
+            },
+            click = "v:lua.ScFa",
+          },
           {
             text = { builtin.lnumfunc, " " },
             condition = { true, builtin.not_empty },

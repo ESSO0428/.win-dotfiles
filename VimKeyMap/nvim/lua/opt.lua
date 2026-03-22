@@ -101,7 +101,9 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 
 -- signcolumn
-vim.wo.signcolumn = "auto:3-6"
+vim.opt.numberwidth = 3
+vim.opt.foldcolumn = "auto:1"
+vim.opt.signcolumn = "auto:6"
 
 -- conceal
 vim.opt.conceallevel = 2

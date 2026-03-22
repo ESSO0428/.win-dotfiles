@@ -1,6 +1,6 @@
 local M = {}
 -- ufo folding
-vim.opt.foldcolumn = "1"
+vim.opt.foldcolumn = "auto:1"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
@@ -47,8 +47,8 @@ function M.setup()
     table.insert(newVirtText, { suffix, "MoreMsg" })
     return newVirtText
   end
-  require("ufo").setup {
-    fold_virt_text_handler = M.handler,
+  local opts = {
+    fold_virt_text_handler = handler,
     provider_selector = function(bufnr, filetype, buftype)
       local empty_return_filetypes = {
         "org",
@@ -73,6 +73,7 @@ function M.setup()
       },
     },
   }
+  require("ufo").setup(opts)
 
   vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "*",
