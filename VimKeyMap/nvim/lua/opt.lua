@@ -77,38 +77,6 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
   desc = "Smart cleanup of ShaDa tmp files",
 })
 
--- References: https://github.com/nvim-lua/kickstart.nvim
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system { "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then
-    error("Error cloning lazy.nvim:\n" .. out)
-  end
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
-
-vim.opt.spell = true
-vim.opt.spelllang = "en,cjk"
-vim.opt.spelloptions = "camel,noplainbuffer"
-vim.g.have_nerd_font = true
-vim.opt.listchars:append "space:·"
-
--- vim options
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-
--- signcolumn
-vim.opt.numberwidth = 3
-vim.opt.foldcolumn = "auto:1"
-vim.opt.signcolumn = "auto:6"
-
--- conceal
-vim.opt.conceallevel = 2
-vim.opt.concealcursor = "nc"
-
 -- lunarvim default options
 local default_options = {
   backup = false, -- creates a backup file
@@ -154,6 +122,53 @@ local default_options = {
 for k, v in pairs(default_options) do
   vim.opt[k] = v
 end
+
+-- References: https://github.com/nvim-lua/kickstart.nvim
+-- [[ Install `lazy.nvim` plugin manager ]]
+--    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system { "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath }
+  if vim.v.shell_error ~= 0 then
+    error("Error cloning lazy.nvim:\n" .. out)
+  end
+end ---@diagnostic disable-next-line: undefined-field
+vim.opt.rtp:prepend(lazypath)
+
+-- 摺疊代碼
+-- vim.wo.foldlevel = 99
+vim.wo.foldenable = true
+vim.wo.foldmethod = "expr"
+vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+
+vim.opt.termguicolors = true
+
+-- 取消預覽取代結果
+-- vim.o.fileformats = "unix"
+-- vim.opt.inccommand = ""
+vim.opt.inccommand = "split"
+vim.opt.spell = true
+vim.opt.spelllang = "en,cjk"
+vim.opt.spelloptions = "camel,noplainbuffer"
+vim.g.have_nerd_font = true
+vim.opt.listchars:append "space:·"
+
+-- Pmenu
+vim.opt.completeopt = "menuone,noselect,popup"
+
+-- vim options
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+
+-- signcolumn
+vim.opt.numberwidth = 3
+vim.opt.foldcolumn = "auto:1"
+vim.opt.signcolumn = "auto:6"
+
+-- conceal
+vim.opt.conceallevel = 2
+vim.opt.concealcursor = "nc"
 
 local _file_opened_group = vim.api.nvim_create_augroup("_file_opened", { clear = true })
 

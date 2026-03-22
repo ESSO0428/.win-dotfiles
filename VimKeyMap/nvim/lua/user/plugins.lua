@@ -1482,7 +1482,7 @@ require("lazy").setup({
     -- event = "VimEnter",
     event = "User FileOpened",
     dependencies = { "nvim-lua/plenary.nvim" },
-    opts = { signs = false },
+    opts = { signs = true },
   },
   {
     "stevearc/oil.nvim",
