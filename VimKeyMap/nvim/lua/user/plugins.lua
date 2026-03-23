@@ -589,8 +589,8 @@ local plugins = {
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { "j-hui/fidget.nvim", opts = {} },
 
-      -- Allows extra capabilities provided by nvim-cmp
-      "hrsh7th/cmp-nvim-lsp",
+      -- Allows extra capabilities provided by blink.cmp
+      "saghen/blink.cmp",
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -721,14 +721,14 @@ local plugins = {
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
+      --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
+      --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities.textDocument.foldingRange = {
         dynamicRegistration = false,
         lineFoldingOnly = true,
       }
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+      capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -1004,10 +1004,11 @@ local plugins = {
     },
   },
   { -- Autocompletion
-    "hrsh7th/nvim-cmp",
+    "saghen/blink.cmp",
     event = "InsertEnter",
+    version = "1.*",
     dependencies = {
-      -- Snippet Engine & its associated nvim-cmp source
+      -- Snippet Engine used by blink.cmp
       {
         "L3MON4D3/LuaSnip",
         build = (function()
@@ -1031,25 +1032,17 @@ local plugins = {
           -- },
         },
       },
-      "saadparwaiz1/cmp_luasnip",
 
-      -- Adds other completion capabilities.
-      --  nvim-cmp does not ship with all sources by default. They are split
-      --  into multiple repos for maintenance purposes.
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
+      {
+        "saghen/blink.compat",
+        version = "2.*",
+        lazy = true,
+        opts = {},
+      },
       "hrsh7th/cmp-path",
     },
     config = function()
-      -- See `:help cmp`
-      local cmp = require "cmp"
-      local cmp_mapping = require "cmp.config.mapping"
-      local status_cmp_ok, cmp_types = pcall(require, "cmp.types.cmp")
-      if not status_cmp_ok then
-        return
-      end
-      local ConfirmBehavior = cmp_types.ConfirmBehavior
-      local SelectBehavior = cmp_types.SelectBehavior
+      local blink = require "blink.cmp"
       local luasnip = require "luasnip"
       luasnip.config.setup {}
 
@@ -1091,367 +1084,206 @@ local plugins = {
         return nil
       end
 
-      local has_words_before = function()
-        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
-      end
-
-      ---when inside a snippet, seeks to the nearest luasnip field if possible, and checks if it is jumpable
-      ---@param dir number 1 for forward, -1 for backward; defaults to 1
-      ---@return boolean true if a jumpable luasnip field is found while inside a snippet
-      local function jumpable(dir)
-        local win_get_cursor = vim.api.nvim_win_get_cursor
-        local get_current_buf = vim.api.nvim_get_current_buf
-
-        ---sets the current buffer's luasnip to the one nearest the cursor
-        ---@return boolean true if a node is found, false otherwise
-        local function seek_luasnip_cursor_node()
-          -- TODO(kylo252): upstream this
-          -- for outdated versions of luasnip
-          if not luasnip.session.current_nodes then
-            return false
-          end
-
-          local node = luasnip.session.current_nodes[get_current_buf()]
-          if not node then
-            return false
-          end
-
-          local snippet = node.parent.snippet
-          local exit_node = snippet.insert_nodes[0]
-
-          local pos = win_get_cursor(0)
-          pos[1] = pos[1] - 1
-
-          -- exit early if we're past the exit node
-          if exit_node then
-            local exit_pos_end = exit_node.mark:pos_end()
-            if (pos[1] > exit_pos_end[1]) or (pos[1] == exit_pos_end[1] and pos[2] > exit_pos_end[2]) then
-              snippet:remove_from_jumplist()
-              luasnip.session.current_nodes[get_current_buf()] = nil
-
-              return false
-            end
-          end
-
-          node = snippet.inner_first:jump_into(1, true)
-          while node ~= nil and node.next ~= nil and node ~= snippet do
-            local n_next = node.next
-            local next_pos = n_next and n_next.mark:pos_begin()
-            local candidate = n_next ~= snippet and next_pos and (pos[1] < next_pos[1])
-              or (pos[1] == next_pos[1] and pos[2] < next_pos[2])
-
-            -- Past unmarked exit node, exit early
-            if n_next == nil or n_next == snippet.next then
-              snippet:remove_from_jumplist()
-              luasnip.session.current_nodes[get_current_buf()] = nil
-
-              return false
-            end
-
-            if candidate then
-              luasnip.session.current_nodes[get_current_buf()] = node
-              return true
-            end
-
-            local ok
-            ok, node = pcall(node.jump_from, node, 1, true) -- no_move until last stop
-            if not ok then
-              snippet:remove_from_jumplist()
-              luasnip.session.current_nodes[get_current_buf()] = nil
-
-              return false
-            end
-          end
-
-          -- No candidate, but have an exit node
-          if exit_node then
-            -- to jump to the exit node, seek to snippet
-            luasnip.session.current_nodes[get_current_buf()] = snippet
-            return true
-          end
-
-          -- No exit node, exit from snippet
-          snippet:remove_from_jumplist()
-          luasnip.session.current_nodes[get_current_buf()] = nil
-          return false
-        end
-
-        if dir == -1 then
-          return luasnip.in_snippet() and luasnip.jumpable(-1)
-        else
-          return luasnip.in_snippet() and seek_luasnip_cursor_node() and luasnip.jumpable(1)
-        end
-      end
-      local cmp_confirm_opts = {
-        behavior = ConfirmBehavior.Replace,
-        select = false,
-      }
-      local cmp_formatting_source_names = {
+      local source_labels = {
         buffer = "(Buffer)",
-        calc = "(Calc)",
-        cmp_tabnine = "(Tabnine)",
-        copilot = "(Copilot)",
-        ["copilot-chat"] = "(copilot-chat)",
-        dap = "(dap)",
-        emoji = "(Emoji)",
-        ["html-css"] = "(html-css)",
-        jupynium = "(jupynium)",
-        jupyter = "(jupyter)",
         lazydev = "(lazydev)",
-        luasnip = "(L-Snippet)",
-        nvim_lsp = "(LSP)",
-        orgmode = "(orgmode)",
+        lsp = "(LSP)",
         path = "(Path)",
-        tmux = "(TMUX)",
-        treesitter = "(TreeSitter)",
-        ultisnips = "(U-Snippet)",
-        ["vim-dadbod-completion"] = "(dadbod-sql)",
-        vsnip = "(V-Snippet)",
+        snippets = "(L-Snippet)",
       }
-      local cmp_formatting_duplicates = {
-        ["html-css"] = 1,
-        buffer = 1,
-        path = 1,
-        nvim_lsp = 1,
-        luasnip = 1,
-        ultisnips = 1,
-        vsnip = 1,
-      }
-      local cmp_duplicates_default = 0
+      local icons = require "user.config.icons"
+      local termcodes = vim.api.nvim_replace_termcodes
 
-      cmp.setup {
-        window = {
-          documentation = cmp.config.window.bordered(),
-          completion = cmp.config.window.bordered {
-            winhighlight = "Normal:CmpPmenu,CursorLine:PmenuSel,Search:None",
-          },
+      local function get_source_label(ctx)
+        return source_labels[ctx.source_id] or ("(" .. ctx.source_name .. ")")
+      end
+
+      local function get_kind_icon(ctx)
+        return icons.kind[ctx.kind] or ctx.kind_icon
+      end
+
+      local function get_kind_highlight(ctx)
+        return ctx.kind_hl
+      end
+
+      local function get_bufnrs()
+        local max_size = 100000
+        local bufs = {}
+
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.api.nvim_get_option_value("filetype", { buf = buf }) ~= "neo-tree" then
+            local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(buf))
+            if size > 0 and size < max_size then
+              bufs[buf] = true
+            end
+          end
+        end
+
+        return vim.tbl_keys(bufs)
+      end
+
+      blink.setup {
+        appearance = {
+          nerd_font_variant = "mono",
         },
-        -- completion = { completeopt = "menu,menuone,noinsert" },
-        completion = {
-          ---@usage The minimum length of a word to complete on.
-          keyword_length = 1,
+        snippets = {
+          preset = "luasnip",
         },
-        experimental = {
-          ghost_text = true,
-          native_menu = false,
-        },
-        formatting = {
-          fields = { "kind", "abbr", "menu" },
-          format = function(entry, vim_item)
-            local max_width = 0
-            if max_width ~= 0 and #vim_item.abbr > max_width then
-              vim_item.abbr = string.sub(vim_item.abbr, 1, max_width - 1) .. require("user.config.icons").ui.Ellipsis
-            end
-
-            -- tailwindcss color preview
-            --[[
-            local doc = entry.completion_item.documentation
-            if vim_item.kind == "Color" and doc then
-              local utils = require "tailwind-tools.utils"
-              local content = type(doc) == "string" and doc or doc.value
-              local base, _, _, _r, _g, _b = 10, content:find "rgba?%((%d+), (%d+), (%d+)"
-
-              if not _r then
-                base, _, _, _r, _g, _b = 16, content:find "#(%x%x)(%x%x)(%x%x)"
+        keymap = {
+          preset = "none",
+          ["<M-i>"] = { "select_prev", "show" },
+          ["<M-k>"] = { "select_next", "show" },
+          ["<M-j>"] = {
+            function(cmp)
+              if cmp.is_menu_visible() then
+                return cmp.cancel()
               end
-
-              if _r then
-                local r, g, b = tonumber(_r, base), tonumber(_g, base), tonumber(_b, base)
-                vim_item.kind_hl_group = utils.set_hl_from(r, g, b, "foreground")
-              end
-            end
-            --]]
-
-            vim_item.kind = require("user.config.icons").kind[vim_item.kind]
-
-            if entry.source.name == "copilot" then
-              if vim.bo.filetype == "prompt" then
-                return
-              end
-              vim_item.kind = require("user.config.icons").git.Octoface
-              vim_item.kind_hl_group = "CmpItemKindCopilot"
-            end
-            if entry.source.name == "copilot-chat" then
-              vim_item.kind = require("user.config.icons").git.Octoface
-              vim_item.kind_hl_group = "CmpItemKindCopilot"
-            end
-            if entry.source.name == "cmp_tabnine" then
-              vim_item.kind = require("user.config.icons").misc.Robot
-              vim_item.kind_hl_group = "CmpItemKindTabnine"
-            end
-
-            if entry.source.name == "crates" then
-              vim_item.kind = require("user.config.icons").misc.Package
-              vim_item.kind_hl_group = "CmpItemKindCrate"
-            end
-
-            if entry.source.name == "lab.quick_data" then
-              vim_item.kind = require("user.config.icons").misc.CircuitBoard
-              vim_item.kind_hl_group = "CmpItemKindConstant"
-            end
-
-            if entry.source.name == "emoji" then
-              vim_item.kind = require("user.config.icons").misc.Smiley
-              vim_item.kind_hl_group = "CmpItemKindEmoji"
-            end
-
-            if entry.source.name == "orgmode" then
-              -- vim_item.kind = ""
-              -- vim_item.kind_hl_group = "CmpItemKindCopilot"
-              local ok, devicons = pcall(require, "nvim-web-devicons")
-              if ok then
-                local icon, icon_highlight_group = devicons.get_icon(vim.fn.expand "%:t")
-                if icon == nil then
-                  icon, icon_highlight_group = devicons.get_icon_by_filetype(vim.bo.filetype)
-                end
-                vim_item.kind = icon
-                vim_item.kind_hl_group = icon_highlight_group
-              end
-            end
-            if entry.source.name == "vim-dadbod-completion" then
-              vim_item.kind = ""
-              vim_item.kind_hl_group = "CmpItemKindEmoji"
-            end
-            vim_item.menu = cmp_formatting_source_names[entry.source.name]
-            vim_item.dup = cmp_formatting_duplicates[entry.source.name] or cmp_duplicates_default
-
-            if entry.source.name == "html-css" then
-              -- vim_item.menu = entry.source.menu
-              vim_item.menu = "(html-css)" .. " " .. entry.completion_item.menu
-            end
-            return vim_item
-          end,
-        },
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-
-        -- For an understanding of why these mappings were
-        -- chosen, you will need to read `:help ins-completion`
-        --
-        -- No, but seriously. Please read `:help ins-completion`, it is really good!
-        mapping = cmp_mapping.preset.insert {
-          -- ["<M-i>"] = cmp_mapping(cmp_mapping.select_prev_item(), { "i", "c" }),
-          ["<M-i>"] = cmp_mapping(function(fallback)
-            if cmp.visible() then
-              -- cmp.select_prev_item()
-              cmp.select_prev_item { behavior = SelectBehavior.Select }
-            else
-              cmp.complete()
-              --fallback()
-            end
-          end, { "i", "c" }),
-          ["<M-k>"] = cmp_mapping(function(fallback)
-            if cmp.visible() then
-              -- cmp.select_next_item()
-              cmp.select_next_item { behavior = SelectBehavior.Select }
-            else
-              cmp.complete()
-              --fallback()
-            end
-          end, { "i", "c" }),
-          ["<M-j>"] = cmp.mapping(cmp_mapping.abort(), { "i", "c" }),
-          -- ["<C-j>"] = cmp_mapping(cmp_mapping.select_next_item(), { "i", "c" }),
-          ["<Down>"] = cmp_mapping(cmp_mapping.select_next_item { behavior = SelectBehavior.Select }, { "i" }),
-          ["<Up>"] = cmp_mapping(cmp_mapping.select_prev_item { behavior = SelectBehavior.Select }, { "i" }),
-          ["<C-u>"] = cmp_mapping.scroll_docs(-4),
-          ["<C-o>"] = cmp_mapping.scroll_docs(4),
-          ["<M-l>"] = cmp_mapping {
-            -- i = cmp_mapping.confirm { behavior = ConfirmBehavior.Replace, select = false },
-            i = cmp_mapping.confirm { cmp_confirm_opts },
-            c = function(fallback)
-              if cmp.visible() then
-                cmp.confirm { behavior = ConfirmBehavior.Replace, select = false }
-              else
-                fallback()
-              end
+              return termcodes("<Esc>", true, false, true)
             end,
           },
-          ["<M-d>"] = cmp_mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            elseif jumpable(1) then
-              luasnip.jump(1)
-            elseif has_words_before() then
-              -- cmp.complete()
-              fallback()
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          ["<M-a>"] = cmp_mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          -- ["<C-Space>"] = cmp_mapping.complete(),
-          -- ["<C-e>"] = cmp_mapping.abort(),
-          ["<CR>"] = cmp_mapping(function(fallback)
-            if cmp.visible() then
-              local confirm_opts = vim.deepcopy(cmp_confirm_opts) -- avoid mutating the original opts below
-              local is_insert_mode = function()
-                return vim.api.nvim_get_mode().mode:sub(1, 1) == "i"
+          ["<Down>"] = { "select_next", "fallback" },
+          ["<Up>"] = { "select_prev", "fallback" },
+          ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+          ["<C-o>"] = { "scroll_documentation_down", "fallback" },
+          ["<M-l>"] = { "accept", "fallback" },
+          ["<M-d>"] = { "select_next", "snippet_forward", "fallback" },
+          ["<M-a>"] = { "select_prev", "snippet_backward", "fallback" },
+          ["<CR>"] = {
+            function(cmp)
+              if cmp.is_menu_visible() then
+                return cmp.accept()
               end
-              if is_insert_mode() then -- prevent overwriting brackets
-                confirm_opts.behavior = ConfirmBehavior.Insert
-              end
-              local entry = cmp.get_selected_entry()
-              local is_copilot = entry and entry.source.name == "copilot"
-              -- if is_copilot then
-              --   confirm_opts.behavior = ConfirmBehavior.Replace
-              --   confirm_opts.select = true
-              -- end
-              if cmp.confirm(confirm_opts) then
-                return -- success, exit early
-              end
-            end
-            fallback() -- if not exited early, always fallback
-          end),
-        },
-        sources = {
-          {
-            name = "lazydev",
-            -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
-            group_index = 0,
+            end,
+            "fallback",
           },
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "path" },
-          {
-            name = "buffer",
-            option = {
-              get_bufnrs = function()
-                local max_size = 100000 -- 设置文件大小限制为 100,000 字节
-                local bufs = {}
-
-                -- 获取当前 Tab 中的所有窗口
-                local windows = vim.api.nvim_tabpage_list_wins(0)
-                for _, win in ipairs(windows) do
-                  -- 获取每个窗口的缓冲区编号
-                  local buf = vim.api.nvim_win_get_buf(win)
-                  -- 检查文件类型是否不是 neo-tree
-                  if vim.api.nvim_get_option_value("filetype", { buf = buf }) ~= "neo-tree" then
-                    -- 检查文件大小
-                    local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(buf))
-                    if size > 0 and size < max_size then
-                      bufs[buf] = true
-                    end
-                  end
-                end
-
-                return vim.tbl_keys(bufs)
-              end,
+        },
+        completion = {
+          keyword = {
+            range = "prefix",
+          },
+          list = {
+            selection = {
+              preselect = false,
+              auto_insert = false,
             },
           },
+          ghost_text = {
+            enabled = true,
+          },
+          menu = {
+            border = "rounded",
+            winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
+            draw = {
+              columns = { { "kind_icon" }, { "label", "label_description", gap = 1 }, { "source_label" } },
+              components = {
+                kind_icon = {
+                  ellipsis = false,
+                  text = function(ctx)
+                    return get_kind_icon(ctx) .. ctx.icon_gap
+                  end,
+                  highlight = function(ctx)
+                    return get_kind_highlight(ctx)
+                  end,
+                },
+                label = {
+                  width = { fill = true, max = 60 },
+                },
+                label_description = {
+                  width = { max = 30 },
+                },
+                source_label = {
+                  width = { max = 24 },
+                  text = function(ctx)
+                    return get_source_label(ctx)
+                  end,
+                  highlight = "BlinkCmpSource",
+                },
+              },
+            },
+          },
+          documentation = {
+            auto_show = false,
+            window = {
+              border = "rounded",
+              winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
+            },
+          },
+        },
+        cmdline = {
+          enabled = true,
+          keymap = {
+            preset = "cmdline",
+          },
+          sources = function()
+            local cmdtype = vim.fn.getcmdtype()
+            if cmdtype == "/" or cmdtype == "?" then
+              return { "buffer" }
+            end
+            if cmdtype == ":" then
+              return { "cmdline", "path" }
+            end
+            return {}
+          end,
+          completion = {
+            menu = {
+              auto_show = true,
+            },
+            list = {
+              selection = {
+                preselect = false,
+                auto_insert = false,
+              },
+            },
+          },
+        },
+        sources = {
+          min_keyword_length = 1,
+          default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+          providers = {
+            lazydev = {
+              name = "LazyDev",
+              module = "lazydev.integrations.blink",
+              score_offset = 100,
+            },
+            lsp = {
+              name = "LSP",
+              fallbacks = {},
+            },
+            path = {
+              name = "Path",
+              module = "blink.compat.source",
+              score_offset = 3,
+              opts = {
+                cmp_name = "path",
+                get_cwd = function(context)
+                  local bufnr = context.bufnr
+                  if bufnr == nil and context.context ~= nil then
+                    bufnr = context.context.bufnr
+                  end
+                  bufnr = bufnr or vim.api.nvim_get_current_buf()
+                  return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":p:h")
+                end,
+              },
+            },
+            snippets = {
+              name = "LuaSnip",
+              score_offset = -1,
+            },
+            buffer = {
+              name = "Buffer",
+              score_offset = -3,
+              opts = {
+                get_bufnrs = get_bufnrs,
+              },
+            },
+            cmdline = {
+              name = "Cmdline",
+            },
+          },
+        },
+        fuzzy = {
+          implementation = "lua",
         },
       }
     end,
@@ -1597,21 +1429,6 @@ local plugins = {
       -- - sr)'  - [S]urround [R]eplace [)] [']
       -- require("mini.surround").setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require "mini.statusline"
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return "%2l:%-2v"
-      end
-
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
@@ -1627,14 +1444,18 @@ local plugins = {
     event = "VeryLazy", -- 或 "UIEnter"
     config = function()
       vim.g.vim_pid = vim.fn.getpid()
-      require("lualine").setup {
-        sections = {
-          lualine_c = {},
-          lualine_x = {
-            { 'vim.api.nvim_call_function("getcwd", {0})' },
-            { "encoding" },
-            { "fileformat" },
-            { "filetype", icon_only = false },
+        require("lualine").setup {
+          sections = {
+            lualine_c = {},
+            lualine_x = {
+              {
+                function()
+                  return vim.fn.getcwd()
+                end,
+              },
+              { "encoding" },
+              { "fileformat" },
+              { "filetype", icon_only = false },
             {
               "pid",
               fmt = function()
