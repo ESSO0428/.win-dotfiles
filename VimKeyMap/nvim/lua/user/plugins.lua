@@ -2220,7 +2220,7 @@ require("lazy.view.config").commands.log = {
 local function set_if_command_exists(cmd, value)
   pcall(vim.cmd, cmd .. " " .. value)
 end
-set_if_command_exists("GuiWindowOpacity", "0.9")
+set_if_command_exists("GuiWindowOpacity", "0.85")
 
 local transparent_highlights = {
   "Normal",
