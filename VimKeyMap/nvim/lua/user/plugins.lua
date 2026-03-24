@@ -1214,27 +1214,22 @@ local plugins = {
           enabled = true,
           keymap = {
             preset = "cmdline",
+            ["<M-i>"] = { "select_prev", "show" },
+            ["<M-k>"] = { "select_next", "show" },
+            ["<M-j>"] = { "cancel", "fallback" },
+            ["<Right>"] = false,
+            ["<Left>"] = false,
+            ["<Down>"] = { "select_next", "fallback" },
+            ["<Up>"] = { "select_prev", "fallback" },
+            ["<M-l>"] = { "accept", "fallback" },
+            ["<CR>"] = { "accept_and_enter", "fallback" },
           },
-          sources = function()
-            local cmdtype = vim.fn.getcmdtype()
-            if cmdtype == "/" or cmdtype == "?" then
-              return { "buffer" }
-            end
-            if cmdtype == ":" then
-              return { "cmdline", "path" }
-            end
-            return {}
-          end,
           completion = {
             menu = {
               auto_show = true,
             },
-            list = {
-              selection = {
-                preselect = false,
-                auto_insert = false,
-              },
-            },
+            list = { selection = { preselect = false } },
+            ghost_text = { enabled = true },
           },
         },
         sources = {
@@ -1444,18 +1439,18 @@ local plugins = {
     event = "VeryLazy", -- 或 "UIEnter"
     config = function()
       vim.g.vim_pid = vim.fn.getpid()
-        require("lualine").setup {
-          sections = {
-            lualine_c = {},
-            lualine_x = {
-              {
-                function()
-                  return vim.fn.getcwd()
-                end,
-              },
-              { "encoding" },
-              { "fileformat" },
-              { "filetype", icon_only = false },
+      require("lualine").setup {
+        sections = {
+          lualine_c = {},
+          lualine_x = {
+            {
+              function()
+                return vim.fn.getcwd()
+              end,
+            },
+            { "encoding" },
+            { "fileformat" },
+            { "filetype", icon_only = false },
             {
               "pid",
               fmt = function()
