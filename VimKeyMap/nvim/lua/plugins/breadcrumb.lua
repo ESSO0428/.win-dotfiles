@@ -2,7 +2,7 @@ return {
   { "MunifTanjim/nui.nvim" },
   {
     "SmiteshP/nvim-navic",
-    event = "LspAttach",
+    event = "User FileOpened",
     config = function()
       require("user.config.breadcrumbs").setup()
     end,
