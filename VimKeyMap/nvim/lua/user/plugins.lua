@@ -290,6 +290,10 @@ local plugins = {
     priority = 1000, -- Make sure to load this before all the other start plugins.
     opts = {
       transparent = true,
+      terminal_colors = false, -- Configure the colors used when opening a `:terminal` in Neovim
+      plugins = {
+        rainbow = false,
+      },
     },
     init = function()
       -- Load the colorscheme here.
